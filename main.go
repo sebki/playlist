@@ -9,24 +9,21 @@ func main() {
 	c, close := newClient()
 	defer close()
 
-	u := User{
-		Username: "sebki3000",
-		Email:    "info@sleeved.de",
-		Password: "!Basti4Online",
-	}
-
-	err := u.createNewUser(c)
+	u, err := createNewUser(c, "sebki4000", "masmas@torn-relic.de", "!Basti4Online")
 	if err != nil {
 		if !IsValidationError(err) {
 			log.Fatal(err)
 		}
 		fmt.Println(err)
 	}
+	fmt.Println(u)
 
-	err = u.login(c)
+	u, err = loginByEmail(c, "info@sleeved.de", "!Basti4Online")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println(u)
 
 	// r := gin.Default()
 	// r.GET("/ping", func(c *gin.Context) {

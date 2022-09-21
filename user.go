@@ -14,25 +14,26 @@ type User struct {
 	Uid      string `json:"iud,omitempty"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
-	Password string `json:"password"`
 }
 
-func (user *User) createNewUser(c *dgo.Dgraph) error {
+func createNewUser(c *dgo.Dgraph, username, email, password string) (User, error) {
 	ctx := context.Background()
 	txn := c.NewTxn()
 	defer txn.Discard(ctx)
 
-	err := user.checkUserOrEmail(c)
+	user := User{}
+
+	err := checkUserOrEmail(c, username, email)
 	if err != nil {
 		if IsValidationError(err) {
-			return err
+			return user, err
 		}
 		log.Fatal(err)
 	}
 
 	u, err := json.Marshal(&user)
 	if err != nil {
-		return err
+		return user, err
 	}
 
 	mu := &api.Mutation{
@@ -40,14 +41,21 @@ func (user *User) createNewUser(c *dgo.Dgraph) error {
 		CommitNow: true,
 	}
 
-	_, err = txn.Mutate(ctx, mu)
+	assigned, err := txn.Mutate(ctx, mu)
 	if err != nil {
-		return err
+		return user, err
 	}
-	return nil
+
+	user.Username = username
+	user.Email = email
+	for _, v := range assigned.Uids {
+		user.Uid = v
+		break
+	}
+	return user, nil
 }
 
-func (user *User) checkUserOrEmail(c *dgo.Dgraph) error {
+func checkUserOrEmail(c *dgo.Dgraph, username, email string) error {
 	ctx := context.Background()
 	txn := c.NewTxn()
 	defer txn.Discard(ctx)
@@ -60,7 +68,7 @@ func (user *User) checkUserOrEmail(c *dgo.Dgraph) error {
 		email(func: eq(email, %q)) {
 			email
 		}
-	}`, user.Username, user.Email)
+	}`, username, email)
 
 	resp, err := txn.Query(ctx, q)
 	if err != nil {
@@ -85,12 +93,12 @@ func (user *User) checkUserOrEmail(c *dgo.Dgraph) error {
 		return nil
 	} else {
 		for _, v := range data.Username {
-			if v.Name == user.Username {
+			if v.Name == username {
 				return errUsernameExists
 			}
 		}
 		for _, v := range data.Email {
-			if v.Email == user.Email {
+			if v.Email == email {
 				return errEmailExists
 			}
 		}
@@ -99,54 +107,106 @@ func (user *User) checkUserOrEmail(c *dgo.Dgraph) error {
 	return nil
 }
 
-func (user *User) login(c *dgo.Dgraph) error {
+func loginByEmail(c *dgo.Dgraph, email, password string) (User, error) {
 	ctx := context.Background()
 	txn := c.NewTxn()
 	defer txn.Discard(ctx)
 
+	u := User{}
+
 	q := fmt.Sprintf(`
 	{
-		user(func: eq(username, %q)) {
-			checkpwd(password, %q)
-		}
 		email(func: eq(email, %q)) {
+			uid
+			username
+			email
 			checkpwd(password, %q)
 		}
-	}`, user.Username, user.Password, user.Email, user.Password)
+	}`, email, password)
 
 	resp, err := txn.Query(ctx, q)
 	if err != nil {
-		return err
+		return u, err
 	}
 
 	var data struct {
-		Username []struct {
-			CheckPwd bool `json:"checkpwd(password)"`
-		} `json:"user"`
 		Email []struct {
-			CheckPwd bool `json:"checkpwd(password)"`
+			Uid      string `json:"uid"`
+			Username string `json:"username"`
+			Email    string `json:"email"`
+			CheckPwd bool   `json:"checkpwd(password)"`
 		} `json:"email"`
 	}
 
 	err = json.Unmarshal(resp.GetJson(), &data)
 	if err != nil {
-		return err
+		return u, err
 	}
 
-	if len(data.Username) == 0 && len(data.Email) == 0 {
-		return errCredentialsIncorrect
+	if len(data.Email) == 0 {
+		return u, errCredentialsIncorrect
 	} else {
-		for _, v := range data.Username {
-			if v.CheckPwd {
-				return nil
-			}
-		}
 		for _, v := range data.Email {
 			if v.CheckPwd {
-				return nil
+				u.Uid = v.Uid
+				u.Username = v.Username
+				u.Email = v.Email
+				return u, nil
 			}
 		}
 	}
 
-	return errCredentialsIncorrect
+	return u, errCredentialsIncorrect
+}
+
+func loginByUsername(c *dgo.Dgraph, username, password string) (User, error) {
+	ctx := context.Background()
+	txn := c.NewTxn()
+	defer txn.Discard(ctx)
+
+	u := User{}
+
+	q := fmt.Sprintf(`
+	{
+		user(func: eq(username, %q)) {
+			uid
+			username
+			email
+			checkpwd(password, %q)
+		}
+	}`, username, password)
+
+	resp, err := txn.Query(ctx, q)
+	if err != nil {
+		return u, err
+	}
+
+	var data struct {
+		User []struct {
+			Uid      string `json:"uid"`
+			Username string `json:"username"`
+			Email    string `json:"email"`
+			CheckPwd bool   `json:"checkpwd(password)"`
+		} `json:"user"`
+	}
+
+	err = json.Unmarshal(resp.GetJson(), &data)
+	if err != nil {
+		return u, err
+	}
+
+	if len(data.User) == 0 {
+		return u, errCredentialsIncorrect
+	} else {
+		for _, v := range data.User {
+			if v.CheckPwd {
+				u.Uid = v.Uid
+				u.Username = v.Username
+				u.Email = v.Email
+				return u, nil
+			}
+		}
+	}
+
+	return u, errCredentialsIncorrect
 }
