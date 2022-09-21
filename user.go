@@ -10,6 +10,7 @@ import (
 	"github.com/dgraph-io/dgo/v200/protos/api"
 )
 
+// User holds all relevant userinformation
 type User struct {
 	Uid      string `json:"iud,omitempty"`
 	Username string `json:"username"`

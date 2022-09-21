@@ -2,6 +2,7 @@ package main
 
 import "errors"
 
+// ValidationError holds all errors concerning user validation
 type ValidationError error
 
 var (
