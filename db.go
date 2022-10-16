@@ -11,6 +11,7 @@ import (
 
 const dbAddr = "localhost:9080"
 
+// CloseFunc is used to pass the grpc.ClientConn Close() function out of newClient()
 type CloseFunc func()
 
 func newClient() (*dgo.Dgraph, CloseFunc) {
