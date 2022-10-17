@@ -1,4 +1,4 @@
-package main
+package errors
 
 import (
 	"errors"
@@ -11,9 +11,9 @@ import (
 type ValidationError error
 
 var (
-	errUsernameExists       = ValidationError(errors.New("username already taken"))
-	errEmailExists          = ValidationError(errors.New("an account with that email already exists"))
-	errCredentialsIncorrect = ValidationError(errors.New("email, username or password incorrect"))
+	ErrUsernameExists       = ValidationError(errors.New("username already taken"))
+	ErrEmailExists          = ValidationError(errors.New("an account with that email already exists"))
+	ErrCredentialsIncorrect = ValidationError(errors.New("email, username or password incorrect"))
 )
 
 // IsValidationError returns whether the error is of type ValidationError

@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 
 	"github.com/dgraph-io/dgo/v200"
 	"github.com/dgraph-io/dgo/v200/protos/api"
+	"github.com/sebki/playlist/internal/errors"
 )
 
 // User holds all relevant userinformation
@@ -26,7 +27,7 @@ func createNewUser(c *dgo.Dgraph, username, email, password string) (User, error
 
 	err := checkUserOrEmail(c, username, email)
 	if err != nil {
-		if IsValidationError(err) {
+		if errors.IsValidationError(err) {
 			return user, err
 		}
 		log.Fatal(err)
@@ -95,12 +96,12 @@ func checkUserOrEmail(c *dgo.Dgraph, username, email string) error {
 	} else {
 		for _, v := range data.Username {
 			if v.Name == username {
-				return errUsernameExists
+				return errors.ErrUsernameExists
 			}
 		}
 		for _, v := range data.Email {
 			if v.Email == email {
-				return errEmailExists
+				return errors.ErrEmailExists
 			}
 		}
 	}
@@ -145,7 +146,7 @@ func loginByEmail(c *dgo.Dgraph, email, password string) (User, error) {
 	}
 
 	if len(data.Email) == 0 {
-		return u, errCredentialsIncorrect
+		return u, errors.ErrCredentialsIncorrect
 	} else {
 		for _, v := range data.Email {
 			if v.CheckPwd {
@@ -157,7 +158,7 @@ func loginByEmail(c *dgo.Dgraph, email, password string) (User, error) {
 		}
 	}
 
-	return u, errCredentialsIncorrect
+	return u, errors.ErrCredentialsIncorrect
 }
 
 func loginByUsername(c *dgo.Dgraph, username, password string) (User, error) {
@@ -197,7 +198,7 @@ func loginByUsername(c *dgo.Dgraph, username, password string) (User, error) {
 	}
 
 	if len(data.User) == 0 {
-		return u, errCredentialsIncorrect
+		return u, errors.ErrCredentialsIncorrect
 	} else {
 		for _, v := range data.User {
 			if v.CheckPwd {
@@ -209,5 +210,5 @@ func loginByUsername(c *dgo.Dgraph, username, password string) (User, error) {
 		}
 	}
 
-	return u, errCredentialsIncorrect
+	return u, errors.ErrCredentialsIncorrect
 }

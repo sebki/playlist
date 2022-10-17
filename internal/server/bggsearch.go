@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"encoding/xml"
@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sebki/playlist/internal/errors"
 )
 
 const BaseURL = "https://www.boardgamegeek.com/xmlapi2/"
@@ -89,19 +90,19 @@ func bggsearch(c *gin.Context) {
 
 	httpRes, err := http.Get(searchString)
 	if err != nil {
-		InternalServerError(c, err)
+		errors.InternalServerError(c, err)
 		return
 	}
 
 	defer httpRes.Body.Close()
 	body, err := io.ReadAll(httpRes.Body)
 	if err != nil {
-		InternalServerError(c, err)
+		errors.InternalServerError(c, err)
 		return
 	}
 	err = xml.Unmarshal(body, &res)
 	if err != nil {
-		InternalServerError(c, err)
+		errors.InternalServerError(c, err)
 		return
 	}
 
