@@ -14,7 +14,7 @@ const dbAddr = "localhost:9080"
 // CloseFunc is used to pass the grpc.ClientConn Close() function out of newClient()
 type CloseFunc func()
 
-func newClient() (*dgo.Dgraph, CloseFunc) {
+func NewClient() (*dgo.Dgraph, CloseFunc) {
 	d, err := grpc.Dial(dbAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
