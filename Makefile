@@ -19,3 +19,6 @@ clean:
 	go clean
 	rm ./bin/${BINARY_NAME}-linux
 	rm ./bin/${BINARY_NAME}-windows.exe
+
+tidy: 
+	go mod tidy

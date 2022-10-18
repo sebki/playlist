@@ -1,6 +1,7 @@
 package bgg
 
 import (
+	"log"
 	"net/http"
 	"time"
 )
@@ -81,13 +82,16 @@ const (
 // Query queries the Boardgamegeek XML API 2 and returns a http.Response.
 // Retries 10 times, if response status is not ok
 func Query(q BggQuery) (BggResult, error) {
+	log.Println("Query func called")
 	stdRes := new(BggResult)
 	search := q.generateSearchString()
+	log.Println("Searchstring generated: ", search)
 
 	res := new(http.Response)
 	for i := 1; i <= 10; i++ {
 		res, err := http.Get(search)
 		if err != nil {
+			log.Println(err)
 			return nil, err
 		}
 		if res.StatusCode == http.StatusOK {
@@ -95,9 +99,11 @@ func Query(q BggQuery) (BggResult, error) {
 		}
 		time.Sleep(time.Second * 2)
 	}
+	log.Println("BGG get func called and gotten response: ", res.Body)
 
 	switch q.(type) {
 	case *SearchQuery:
+		log.Println("SearchQuery type identified")
 		sr := &SearchResult{}
 		err := sr.Unmarshal(res)
 		if err != nil {
