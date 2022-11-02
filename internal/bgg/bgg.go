@@ -3,7 +3,6 @@ package bgg
 import (
 	"log"
 	"net/http"
-	"time"
 )
 
 // BggQuery interface
@@ -87,18 +86,12 @@ func Query(q BggQuery) (BggResult, error) {
 	search := q.generateSearchString()
 	log.Println("Searchstring generated: ", search)
 
-	res := new(http.Response)
-	for i := 1; i <= 10; i++ {
-		res, err := http.Get(search)
-		if err != nil {
-			log.Println(err)
-			return nil, err
-		}
-		if res.StatusCode == http.StatusOK {
-			break
-		}
-		time.Sleep(time.Second * 2)
+	res, err := http.Get(search)
+	if err != nil {
+		log.Println(err)
+		return nil, err
 	}
+
 	log.Println("BGG get func called and gotten response: ", res.Body)
 
 	switch q.(type) {
@@ -109,6 +102,7 @@ func Query(q BggQuery) (BggResult, error) {
 		if err != nil {
 			return sr, err
 		}
+		log.Println(sr)
 		return sr, nil
 	default:
 		return *stdRes, nil
