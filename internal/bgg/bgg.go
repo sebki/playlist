@@ -28,6 +28,10 @@ const (
 
 )
 
+func getThingType(tt string) ThingType {
+
+}
+
 // FamilyType are more abstract or esoteric concepts, represented
 // by something called a family
 type FamilyType string
