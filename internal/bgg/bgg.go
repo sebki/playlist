@@ -25,6 +25,7 @@ const (
 	TypeVideoGame          ThingType = "videogame"          // TypeVideoGame is the ThingType for videogames
 	TypeRPGItem            ThingType = "rpgitem"            // TypeRPGItem ist the ThingType for rpg items
 	TypeRPGIssue           ThingType = "rpgissue"           // TypeRPGIssue is the ThingType for rpg issues (periodicals)
+	TypeNotRecogniced      ThingType = "typenotrecogniced"  // TypeNoType for when ThingType is not recogniced
 
 )
 
@@ -43,7 +44,7 @@ func getThingType(tt string) ThingType {
 	case string(TypeRPGIssue):
 		return TypeRPGIssue
 	default:
-		return TypeBoardGame
+		return TypeNotRecogniced
 	}
 }
 
