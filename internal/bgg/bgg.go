@@ -29,7 +29,22 @@ const (
 )
 
 func getThingType(tt string) ThingType {
-
+	switch tt {
+	case string(TypeBoardGame):
+		return TypeBoardGame
+	case string(TypeBoardGameExpansion):
+		return TypeBoardGameExpansion
+	case string(TypeBoardGameAccessory):
+		return TypeBoardGameAccessory
+	case string(TypeVideoGame):
+		return TypeVideoGame
+	case string(TypeRPGItem):
+		return TypeRPGItem
+	case string(TypeRPGIssue):
+		return TypeRPGIssue
+	default:
+		return TypeBoardGame
+	}
 }
 
 // FamilyType are more abstract or esoteric concepts, represented
@@ -84,9 +99,8 @@ const (
 
 // Query queries the Boardgamegeek XML API 2 and returns a http.Response.
 // Retries 10 times, if response status is not ok
-func Query(q BggQuery) (BggResult, error) {
+func Query(q BggQuery) (GameCollection, error) {
 	log.Println("Query func called")
-	stdRes := new(BggResult)
 	search := q.generateSearchString()
 	log.Println("Searchstring generated: ", search)
 
@@ -101,14 +115,15 @@ func Query(q BggQuery) (BggResult, error) {
 	switch q.(type) {
 	case *SearchQuery:
 		log.Println("SearchQuery type identified")
-		sr := &SearchResult{}
+		sr := &BggSearchResult{}
 		err := sr.Unmarshal(res)
 		if err != nil {
-			return sr, err
+			return GameCollection{}, err
 		}
+		gc := CreateGCfromSR(*sr)
 		log.Println(sr)
-		return sr, nil
+		return gc, nil
 	default:
-		return *stdRes, nil
+		return GameCollection{}, nil
 	}
 }

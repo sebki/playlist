@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type SearchResult struct {
+type BggSearchResult struct {
 	Total string `xml:"total,attr" json:"total"`
 	Item  []struct {
 		Type      string `xml:"type,attr" json:"type"`
@@ -23,12 +23,12 @@ type SearchResult struct {
 	} `xml:"item" json:"item"`
 }
 
-func (sr *SearchResult) getThumbnails() {
+func (sr *BggSearchResult) getThumbnails() {
 	//TODO: Write function when thing lookup is implemented
 }
 
 // Write unmarshals the response body to SearchItems
-func (sr *SearchResult) Unmarshal(b *http.Response) error {
+func (sr *BggSearchResult) Unmarshal(b *http.Response) error {
 	defer b.Body.Close()
 	body, err := io.ReadAll(b.Body)
 	if err != nil {

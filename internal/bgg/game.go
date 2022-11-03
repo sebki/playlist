@@ -1,12 +1,10 @@
-package database
-
-import "github.com/sebki/playlist/internal/bgg"
+package bgg
 
 type Game struct {
 	Title         string `json:"title"`
 	Description   string `json:"description"`
 	BggId         string `json:"bggId"`
-	BggType       []bgg.ThingType
+	BggType       []ThingType
 	Thumbnail     string `json:"thumbnail"`
 	Image         string `json:"image"`
 	Yearpublished string `json:"yearpublished"`
@@ -14,20 +12,24 @@ type Game struct {
 
 type GameCollection map[string]Game
 
-func CreateGCfromSR(sr bgg.SearchResult) GameCollection {
+func CreateGCfromSR(sr BggSearchResult) GameCollection {
 	gc := GameCollection{}
 
 	for _, v := range sr.Item {
-		if _, ok := gc[v.ID]; ok {
-			gc[v.ID].BggType = append(gc[v.ID].BggType, bgg.ThingType(v.Type))
+		if e, ok := gc[v.ID]; ok {
+			e.BggType = append(e.BggType, getThingType(v.Type))
+			gc[v.ID] = e
 		} else {
+			tt := []ThingType{}
 			gc[v.ID] = Game{
 				Title:         v.Name.Value,
 				BggId:         v.ID,
-				BggType:       v.Type,
+				BggType:       append(tt, getThingType(v.Type)),
 				Yearpublished: v.Yearpublished.Value,
 			}
 		}
 
 	}
+
+	return gc
 }
