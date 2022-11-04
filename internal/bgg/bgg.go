@@ -91,14 +91,15 @@ const (
 type LinkType string
 
 const (
-	BoardgameCategoryType  LinkType = "boardgamecategory"
-	BoardgameMechanicType  LinkType = "boardgamemechanic"
-	BoardgameFamilyType    LinkType = "boardgamefamily"
-	BoardgameExpansionType LinkType = "boardgameexpansion"
-	BoardgameDesignerType  LinkType = "boardgamedesigner"
-	BoardgameArtistType    LinkType = "boardgameartist"
-	BoardgamePublisherType LinkType = "boardgamepublisher"
-	LinkTypeNotRecognised  LinkType = "linktypenotrecognised"
+	BoardgameCategoryType       LinkType = "boardgamecategory"
+	BoardgameMechanicType       LinkType = "boardgamemechanic"
+	BoardgameFamilyType         LinkType = "boardgamefamily"
+	BoardgameExpansionType      LinkType = "boardgameexpansion"
+	BoardgameDesignerType       LinkType = "boardgamedesigner"
+	BoardgameArtistType         LinkType = "boardgameartist"
+	BoardgamePublisherType      LinkType = "boardgamepublisher"
+	BoardgameImplementationType LinkType = "boardgameimplementation"
+	LinkTypeNotRecognised       LinkType = "linktypenotrecognised"
 )
 
 func getLinkType(lt string) LinkType {
@@ -117,6 +118,8 @@ func getLinkType(lt string) LinkType {
 		return BoardgameArtistType
 	case string(BoardgamePublisherType):
 		return BoardgamePublisherType
+	case string(BoardgameImplementationType):
+		return BoardgameImplementationType
 	default:
 		return LinkTypeNotRecognised
 	}
