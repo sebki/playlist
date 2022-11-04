@@ -28,5 +28,5 @@ func bggsearch(c *gin.Context) {
 		errors.InternalServerError(c, err)
 	}
 
-	c.JSON(200, res)
+	c.JSON(200, res.Array())
 }

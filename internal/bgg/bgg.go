@@ -19,13 +19,13 @@ const baseURL = "https://www.boardgamegeek.com/xmlapi2/"
 type ThingType string
 
 const (
-	TypeBoardGame          ThingType = "boardgame"          // TypeBoardGame is the ThingType for boardgames
-	TypeBoardGameExpansion ThingType = "boardgameexpansion" // TypeBoardGameExpansion is the ThingType for boardgame expansions
-	TypeBoardGameAccessory ThingType = "boardgameaccessory" // TypeBoardGameAccessory is the ThingType for boardgame accessories
-	TypeVideoGame          ThingType = "videogame"          // TypeVideoGame is the ThingType for videogames
-	TypeRPGItem            ThingType = "rpgitem"            // TypeRPGItem ist the ThingType for rpg items
-	TypeRPGIssue           ThingType = "rpgissue"           // TypeRPGIssue is the ThingType for rpg issues (periodicals)
-	TypeNotRecogniced      ThingType = "typenotrecogniced"  // TypeNoType for when ThingType is not recogniced
+	TypeBoardGame          ThingType = "boardgame"              // TypeBoardGame is the ThingType for boardgames
+	TypeBoardGameExpansion ThingType = "boardgameexpansion"     // TypeBoardGameExpansion is the ThingType for boardgame expansions
+	TypeBoardGameAccessory ThingType = "boardgameaccessory"     // TypeBoardGameAccessory is the ThingType for boardgame accessories
+	TypeVideoGame          ThingType = "videogame"              // TypeVideoGame is the ThingType for videogames
+	TypeRPGItem            ThingType = "rpgitem"                // TypeRPGItem ist the ThingType for rpg items
+	TypeRPGIssue           ThingType = "rpgissue"               // TypeRPGIssue is the ThingType for rpg issues (periodicals)
+	ThingTypeNotRecogniced ThingType = "thingtypenotrecogniced" // TypeNoType for when ThingType is not recogniced
 
 )
 
@@ -44,19 +44,9 @@ func getThingType(tt string) ThingType {
 	case string(TypeRPGIssue):
 		return TypeRPGIssue
 	default:
-		return TypeNotRecogniced
+		return ThingTypeNotRecogniced
 	}
 }
-
-// FamilyType are more abstract or esoteric concepts, represented
-// by something called a family
-type FamilyType string
-
-const (
-	RPGFamilyType           FamilyType = "rpg"             //RPGFamilyType represents RPGs
-	RPGPeriodicalFamilyType FamilyType = "rpgperiodical"   //RPGPeriodicalFamilyType represents rpg periodicals
-	BoardgameFamilyType     FamilyType = "boardgamefamily" // BoardgameFamilyType represents boardgames
-)
 
 // ItemType can ether be a thing, or a family
 type ItemType string
@@ -98,9 +88,43 @@ const (
 	VideogameCompanyHotlistType HotlistType = "videogamecompany" // VideogameCompanyHotlistType is the type for videogamecompanies
 )
 
+type LinkType string
+
+const (
+	BoardgameCategoryType  LinkType = "boardgamecategory"
+	BoardgameMechanicType  LinkType = "boardgamemechanic"
+	BoardgameFamilyType    LinkType = "boardgamefamily"
+	BoardgameExpansionType LinkType = "boardgameexpansion"
+	BoardgameDesignerType  LinkType = "boardgamedesigner"
+	BoardgameArtistType    LinkType = "boardgameartist"
+	BoardgamePublisherType LinkType = "boardgamepublisher"
+	LinkTypeNotRecognised  LinkType = "linktypenotrecognised"
+)
+
+func getLinkType(lt string) LinkType {
+	switch lt {
+	case string(BoardgameCategoryType):
+		return BoardgameCategoryType
+	case string(BoardgameMechanicType):
+		return BoardgameMechanicType
+	case string(BoardgameFamilyType):
+		return BoardgameFamilyType
+	case string(BoardgameExpansionType):
+		return BoardgameExpansionType
+	case string(BoardgameDesignerType):
+		return BoardgameDesignerType
+	case string(BoardgameArtistType):
+		return BoardgameArtistType
+	case string(BoardgamePublisherType):
+		return BoardgamePublisherType
+	default:
+		return LinkTypeNotRecognised
+	}
+}
+
 // Query queries the Boardgamegeek XML API 2 and returns a http.Response.
 // Retries 10 times, if response status is not ok
-func Query(q BggQuery) (*GameCollection, error) {
+func Query(q BggQuery) (GameCollection, error) {
 	log.Println("Query func called")
 	search := q.generateSearchString()
 	log.Println("Searchstring generated: ", search)
@@ -119,20 +143,20 @@ func Query(q BggQuery) (*GameCollection, error) {
 		sr := &BggSearchResult{}
 		err := sr.UnmarshalBody(res)
 		if err != nil {
-			return &GameCollection{}, err
+			return GameCollection{}, err
 		}
 		gc := CreateGCfromSR(*sr)
-		return &gc, nil
+		return gc, nil
 	case *ThingQuery:
 		log.Println("ThingQuery type identified")
 		ti := &ThingItems{}
 		err := ti.UnmarshalBody(res)
 		if err != nil {
-			return &GameCollection{}, err
+			return GameCollection{}, err
 		}
 		gc := CreateGCfromTI(*ti)
-		return &gc, nil
+		return gc, nil
 	default:
-		return &GameCollection{}, nil
+		return GameCollection{}, nil
 	}
 }
