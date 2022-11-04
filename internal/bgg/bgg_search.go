@@ -23,12 +23,8 @@ type BggSearchResult struct {
 	} `xml:"item" json:"item"`
 }
 
-func (sr *BggSearchResult) getThumbnails() {
-	//TODO: Write function when thing lookup is implemented
-}
-
-// Write unmarshals the response body to SearchItems
-func (sr *BggSearchResult) Unmarshal(b *http.Response) error {
+// UnmarshalBody wraps xml.Unmarshal
+func (sr *BggSearchResult) UnmarshalBody(b *http.Response) error {
 	defer b.Body.Close()
 	body, err := io.ReadAll(b.Body)
 	if err != nil {
