@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const dbAddr = "localhost:9080"
+const dbAddr = "https://graph.kiedaisch.net"
 
 // CloseFunc is used to pass the grpc.ClientConn Close() function out of newClient()
 type CloseFunc func()

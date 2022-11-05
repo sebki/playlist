@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sebki/playlist/internal/bgg"
 	"github.com/sebki/playlist/internal/errors"
+	"github.com/sebki/playlist/internal/models"
 )
 
 func bggsearch(c *gin.Context) {
@@ -17,9 +18,9 @@ func bggsearch(c *gin.Context) {
 
 	q := bgg.NewSearchQuery(searchTerm)
 
-	tt := []bgg.ThingType{
-		bgg.TypeBoardGame,
-		bgg.TypeBoardGameExpansion,
+	tt := []models.ThingType{
+		models.TypeBoardGame,
+		models.TypeBoardGameExpansion,
 	}
 	q.SetThingType(tt)
 

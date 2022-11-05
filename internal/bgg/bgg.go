@@ -3,6 +3,8 @@ package bgg
 import (
 	"log"
 	"net/http"
+
+	"github.com/sebki/playlist/internal/models"
 )
 
 // BggQuery interface
@@ -15,38 +17,6 @@ type BggResult interface {
 }
 
 const baseURL = "https://www.boardgamegeek.com/xmlapi2/"
-
-type ThingType string
-
-const (
-	TypeBoardGame          ThingType = "boardgame"              // TypeBoardGame is the ThingType for boardgames
-	TypeBoardGameExpansion ThingType = "boardgameexpansion"     // TypeBoardGameExpansion is the ThingType for boardgame expansions
-	TypeBoardGameAccessory ThingType = "boardgameaccessory"     // TypeBoardGameAccessory is the ThingType for boardgame accessories
-	TypeVideoGame          ThingType = "videogame"              // TypeVideoGame is the ThingType for videogames
-	TypeRPGItem            ThingType = "rpgitem"                // TypeRPGItem ist the ThingType for rpg items
-	TypeRPGIssue           ThingType = "rpgissue"               // TypeRPGIssue is the ThingType for rpg issues (periodicals)
-	ThingTypeNotRecogniced ThingType = "thingtypenotrecogniced" // TypeNoType for when ThingType is not recogniced
-
-)
-
-func getThingType(tt string) ThingType {
-	switch tt {
-	case string(TypeBoardGame):
-		return TypeBoardGame
-	case string(TypeBoardGameExpansion):
-		return TypeBoardGameExpansion
-	case string(TypeBoardGameAccessory):
-		return TypeBoardGameAccessory
-	case string(TypeVideoGame):
-		return TypeVideoGame
-	case string(TypeRPGItem):
-		return TypeRPGItem
-	case string(TypeRPGIssue):
-		return TypeRPGIssue
-	default:
-		return ThingTypeNotRecogniced
-	}
-}
 
 // ItemType can ether be a thing, or a family
 type ItemType string
@@ -88,46 +58,9 @@ const (
 	VideogameCompanyHotlistType HotlistType = "videogamecompany" // VideogameCompanyHotlistType is the type for videogamecompanies
 )
 
-type LinkType string
-
-const (
-	BoardgameCategoryType       LinkType = "boardgamecategory"
-	BoardgameMechanicType       LinkType = "boardgamemechanic"
-	BoardgameFamilyType         LinkType = "boardgamefamily"
-	BoardgameExpansionType      LinkType = "boardgameexpansion"
-	BoardgameDesignerType       LinkType = "boardgamedesigner"
-	BoardgameArtistType         LinkType = "boardgameartist"
-	BoardgamePublisherType      LinkType = "boardgamepublisher"
-	BoardgameImplementationType LinkType = "boardgameimplementation"
-	LinkTypeNotRecognised       LinkType = "linktypenotrecognised"
-)
-
-func getLinkType(lt string) LinkType {
-	switch lt {
-	case string(BoardgameCategoryType):
-		return BoardgameCategoryType
-	case string(BoardgameMechanicType):
-		return BoardgameMechanicType
-	case string(BoardgameFamilyType):
-		return BoardgameFamilyType
-	case string(BoardgameExpansionType):
-		return BoardgameExpansionType
-	case string(BoardgameDesignerType):
-		return BoardgameDesignerType
-	case string(BoardgameArtistType):
-		return BoardgameArtistType
-	case string(BoardgamePublisherType):
-		return BoardgamePublisherType
-	case string(BoardgameImplementationType):
-		return BoardgameImplementationType
-	default:
-		return LinkTypeNotRecognised
-	}
-}
-
 // Query queries the Boardgamegeek XML API 2 and returns a http.Response.
 // Retries 10 times, if response status is not ok
-func Query(q BggQuery) (GameCollection, error) {
+func Query(q BggQuery) (models.GameCollection, error) {
 	log.Println("Query func called")
 	search := q.generateSearchString()
 	log.Println("Searchstring generated: ", search)
@@ -146,7 +79,7 @@ func Query(q BggQuery) (GameCollection, error) {
 		sr := &BggSearchResult{}
 		err := sr.UnmarshalBody(res)
 		if err != nil {
-			return GameCollection{}, err
+			return models.GameCollection{}, err
 		}
 		gc := CreateGCfromSR(*sr)
 		return gc, nil
@@ -155,11 +88,11 @@ func Query(q BggQuery) (GameCollection, error) {
 		ti := &ThingItems{}
 		err := ti.UnmarshalBody(res)
 		if err != nil {
-			return GameCollection{}, err
+			return models.GameCollection{}, err
 		}
 		gc := CreateGCfromTI(*ti)
 		return gc, nil
 	default:
-		return GameCollection{}, nil
+		return models.GameCollection{}, nil
 	}
 }

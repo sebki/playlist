@@ -9,21 +9,15 @@ import (
 	"github.com/dgraph-io/dgo/v200"
 	"github.com/dgraph-io/dgo/v200/protos/api"
 	"github.com/sebki/playlist/internal/errors"
+	"github.com/sebki/playlist/internal/models"
 )
 
-// User holds all relevant userinformation
-type User struct {
-	Uid      string `json:"iud,omitempty"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-}
-
-func createNewUser(c *dgo.Dgraph, username, email, password string) (User, error) {
+func createNewUser(c *dgo.Dgraph, username, email, password string) (models.User, error) {
 	ctx := context.Background()
 	txn := c.NewTxn()
 	defer txn.Discard(ctx)
 
-	user := User{}
+	user := models.User{}
 
 	err := checkUserOrEmail(c, username, email)
 	if err != nil {
@@ -109,12 +103,12 @@ func checkUserOrEmail(c *dgo.Dgraph, username, email string) error {
 	return nil
 }
 
-func loginByEmail(c *dgo.Dgraph, email, password string) (User, error) {
+func loginByEmail(c *dgo.Dgraph, email, password string) (models.User, error) {
 	ctx := context.Background()
 	txn := c.NewTxn()
 	defer txn.Discard(ctx)
 
-	u := User{}
+	u := models.User{}
 
 	q := fmt.Sprintf(`
 	{
@@ -161,12 +155,12 @@ func loginByEmail(c *dgo.Dgraph, email, password string) (User, error) {
 	return u, errors.ErrCredentialsIncorrect
 }
 
-func loginByUsername(c *dgo.Dgraph, username, password string) (User, error) {
+func loginByUsername(c *dgo.Dgraph, username, password string) (models.User, error) {
 	ctx := context.Background()
 	txn := c.NewTxn()
 	defer txn.Discard(ctx)
 
-	u := User{}
+	u := models.User{}
 
 	q := fmt.Sprintf(`
 	{
