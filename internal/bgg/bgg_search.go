@@ -3,8 +3,11 @@ package bgg
 import (
 	"encoding/xml"
 	"io"
+	"log"
 	"net/http"
 	"strings"
+
+	"github.com/sebki/playlist/internal/models"
 )
 
 type BggSearchResult struct {
@@ -21,6 +24,28 @@ type BggSearchResult struct {
 			Value string `xml:"value,attr" json:"value"`
 		} `xml:"yearpublished" json:"yearpublished"`
 	} `xml:"item" json:"item"`
+}
+
+func (bsr *BggSearchResult) ToGameCollection() models.GameCollection {
+	gc := models.GameCollection{}
+
+	for _, v := range bsr.Item {
+		if e, ok := gc[v.ID]; ok {
+			e.SetBggType(v.Type)
+			gc[v.ID] = e
+		} else {
+			tq := NewThingQuery(v.ID)
+			game, err := Query(tq)
+			if err != nil {
+				log.Println(err)
+			}
+			if el, io := game[v.ID]; io {
+				gc[v.ID] = el
+			}
+		}
+	}
+
+	return gc
 }
 
 // UnmarshalBody wraps xml.Unmarshal

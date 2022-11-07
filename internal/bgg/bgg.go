@@ -41,17 +41,15 @@ func Query(q BggQuery) (models.GameCollection, error) {
 		if err != nil {
 			return models.GameCollection{}, err
 		}
-		gc := models.CreateGCfromSR(*sr)
-		return gc, nil
+		return sr.ToGameCollection(), nil
 	case *ThingQuery:
 		log.Println("ThingQuery type identified")
-		ti := &ThingItems{}
-		err := ti.UnmarshalBody(res)
+		btr := &BggThingResult{}
+		err := btr.UnmarshalBody(res)
 		if err != nil {
 			return models.GameCollection{}, err
 		}
-		gc := models.CreateGCfromTI(*ti)
-		return gc, nil
+		return btr.ToGameCollection(), nil
 	default:
 		return models.GameCollection{}, nil
 	}
