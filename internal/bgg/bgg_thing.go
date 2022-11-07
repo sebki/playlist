@@ -11,7 +11,7 @@ import (
 // ThingQuery contains all required Data for a "thing"-search on Boardgamegeek
 type ThingQuery struct {
 	id             []string
-	thingType      []ThingType
+	thingType      []string
 	versions       bool
 	videos         bool
 	stats          bool
@@ -30,7 +30,7 @@ func NewThingQuery(ids ...string) *ThingQuery {
 	idSlice = append(idSlice, ids...)
 	tq := ThingQuery{
 		id:        idSlice,
-		thingType: []ThingType{},
+		thingType: []string{},
 	}
 	return &tq
 }
@@ -95,8 +95,8 @@ func (tq *ThingQuery) generateSearchString() string {
 // thing asked for by id, the results are filtered
 // by the THINGTYPE(s) specified. Multiple THINGTYPEs
 // can be specified in a comma-delimited list.
-func (tq *ThingQuery) SetType(types ...ThingType) {
-	ttSlice := []ThingType{}
+func (tq *ThingQuery) SetType(types ...string) {
+	ttSlice := []string{}
 
 	ttSlice = append(ttSlice, types...)
 

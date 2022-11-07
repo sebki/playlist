@@ -38,18 +38,18 @@ func (sr *BggSearchResult) UnmarshalBody(b *http.Response) error {
 }
 
 type SearchQuery struct {
-	Term      string
-	ThingType []ThingType
-	Exact     bool
+	Term       string
+	ThingTypes []string
+	Exact      bool
 }
 
 func (sq *SearchQuery) generateSearchString() string {
 	searchString := baseURL + "search?query=" + strings.ReplaceAll(sq.Term, " ", "+")
-	if len(sq.ThingType) > 0 {
+	if len(sq.ThingTypes) > 0 {
 		searchString += "&type="
-		for i, v := range sq.ThingType {
-			searchString += string(v)
-			if i < len(sq.ThingType)-1 {
+		for i, v := range sq.ThingTypes {
+			searchString += v
+			if i < len(sq.ThingTypes)-1 {
 				searchString += ","
 			}
 		}
@@ -71,8 +71,8 @@ func NewSearchQuery(query string) *SearchQuery {
 }
 
 // SetThingType returns all items that match query of type ThingType
-func (sq *SearchQuery) SetThingType(thingType []ThingType) {
-	sq.ThingType = thingType
+func (sq *SearchQuery) AddThingType(thingType string) {
+	sq.ThingTypes = append(sq.ThingTypes, thingType)
 }
 
 // EnableExact limits results to items that match the query exactly
