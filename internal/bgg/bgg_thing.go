@@ -6,12 +6,14 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/sebki/playlist/internal/models"
 )
 
 // ThingQuery contains all required Data for a "thing"-search on Boardgamegeek
 type ThingQuery struct {
 	id             []string
-	thingType      []ThingType
+	thingType      []string
 	versions       bool
 	videos         bool
 	stats          bool
@@ -30,7 +32,7 @@ func NewThingQuery(ids ...string) *ThingQuery {
 	idSlice = append(idSlice, ids...)
 	tq := ThingQuery{
 		id:        idSlice,
-		thingType: []ThingType{},
+		thingType: []string{},
 	}
 	return &tq
 }
@@ -90,13 +92,13 @@ func (tq *ThingQuery) generateSearchString() string {
 	return searchString
 }
 
-// SetType sets thingType
+// AddType sets thingType
 // Type Specifies that, regardless of the type of
 // thing asked for by id, the results are filtered
 // by the THINGTYPE(s) specified. Multiple THINGTYPEs
 // can be specified in a comma-delimited list.
-func (tq *ThingQuery) SetType(types ...ThingType) {
-	ttSlice := []ThingType{}
+func (tq *ThingQuery) AddType(types ...string) {
+	ttSlice := []string{}
 
 	ttSlice = append(ttSlice, types...)
 
@@ -173,7 +175,7 @@ func (tq *ThingQuery) SetPagesize(ps int) error {
 }
 
 // ThingItems contains all possible data response of a "thing"-query on Boardgamegeek
-type ThingItems struct {
+type BggThingResult struct {
 	XMLName    xml.Name `xml:"items"`
 	Termsofuse string   `xml:"termsofuse,attr"`
 	Games      []struct {
@@ -218,15 +220,55 @@ type ThingItems struct {
 }
 
 // Write unmarshals the response body to ThingItems
-func (ti *ThingItems) UnmarshalBody(b *http.Response) error {
+func (btr *BggThingResult) UnmarshalBody(b *http.Response) error {
 	defer b.Body.Close()
 	body, err := io.ReadAll(b.Body)
 	if err != nil {
 		return err
 	}
-	err = xml.Unmarshal(body, ti)
+	err = xml.Unmarshal(body, btr)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (btr *BggThingResult) ToGameCollection() models.GameCollection {
+	gc := models.GameCollection{}
+
+	for _, v := range btr.Games {
+		if e, ok := gc[v.ID]; ok {
+			e.SetBggType(v.Type)
+		} else {
+			lx := []models.Link{}
+			for _, l := range v.Link {
+
+				newLx := models.Link{
+					Value:   l.Value,
+					ID:      l.ID,
+					Inbound: l.Inbound,
+				}
+				newLx.SetLinkType(v.Type)
+				lx = append(lx, newLx)
+			}
+			game := models.Game{
+				Title:       v.Name[0].Value,
+				BggId:       v.ID,
+				Description: v.Description,
+				Thumbnail:   v.Thumbnail,
+				Image:       v.Image,
+				Links:       lx,
+			}
+			game.SetBggType(v.Type)
+			game.SetYearpublished(v.Yearpublished.Value)
+			game.SetMinage(v.Minage.Value)
+			game.SetMinplaytime(v.Minplaytime.Value)
+			game.SetMaxplaytime(v.Maxplaytime.Value)
+			game.SetMinplayer(v.Minplayers.Value)
+			game.SetMaxplayer(v.Maxplayers.Value)
+
+		}
+	}
+
+	return gc
 }

@@ -1,5 +1,10 @@
 package models
 
+import (
+	"log"
+	"strconv"
+)
+
 type Game struct {
 	Title         string      `json:"title"`
 	Description   string      `json:"description"`
@@ -21,6 +26,9 @@ func NewGame() Game {
 }
 
 func (g *Game) SetTitle(title string) {
+	if title == "" {
+		log.Println("no title provided")
+	}
 	g.Title = title
 }
 
@@ -44,32 +52,56 @@ func (g *Game) SetImageLink(link string) {
 	g.Image = link
 }
 
-func (g *Game) SetYearpublished(year int) {
-	g.Yearpublished = year
+func (g *Game) SetYearpublished(year string) {
+	intYear, err := strconv.Atoi(year)
+	if err != nil {
+		log.Println(err)
+	}
+	g.Yearpublished = intYear
 }
 
-func (g *Game) SetLink(link Link) {
-	g.Links = append(g.Links, link)
+func (g *Game) SetLinks(link ...Link) {
+	g.Links = append(g.Links, link...)
 }
 
-func (g *Game) SetMinage(age int) {
-	g.Minage = age
+func (g *Game) SetMinage(age string) {
+	intAge, err := strconv.Atoi(age)
+	if err != nil {
+		log.Println(err)
+	}
+	g.Minage = intAge
 }
 
-func (g *Game) SetMinplayer(count int) {
-	g.Minplayer = count
+func (g *Game) SetMinplayer(count string) {
+	intCount, err := strconv.Atoi(count)
+	if err != nil {
+		log.Println(err)
+	}
+	g.Minplayer = intCount
 }
 
-func (g *Game) SetMaxplayer(count int) {
-	g.Maxplayer = count
+func (g *Game) SetMaxplayer(count string) {
+	intCount, err := strconv.Atoi(count)
+	if err != nil {
+		log.Println(err)
+	}
+	g.Maxplayer = intCount
 }
 
-func (g *Game) SetMinplaytime(time int) {
-	g.Minplaytime = time
+func (g *Game) SetMinplaytime(time string) {
+	intTime, err := strconv.Atoi(time)
+	if err != nil {
+		log.Println(err)
+	}
+	g.Minplaytime = intTime
 }
 
-func (g *Game) SetMaxplaytime(time int) {
-	g.Maxplaytime = time
+func (g *Game) SetMaxplaytime(time string) {
+	intTime, err := strconv.Atoi(time)
+	if err != nil {
+		log.Println(err)
+	}
+	g.Maxplaytime = intTime
 }
 
 type ThingType string
@@ -81,7 +113,7 @@ const (
 	TypeVideoGame          ThingType = "videogame"              // TypeVideoGame is the ThingType for videogames
 	TypeRPGItem            ThingType = "rpgitem"                // TypeRPGItem ist the ThingType for rpg items
 	TypeRPGIssue           ThingType = "rpgissue"               // TypeRPGIssue is the ThingType for rpg issues (periodicals)
-	ThingTypeNotRecogniced ThingType = "thingtypenotrecogniced" // TypeNoType for when ThingType is not recogniced
+	ThingTypeNotRecognised ThingType = "thingtypenotrecognised" // TypeNoType for when ThingType is not recogniced
 
 )
 
@@ -100,72 +132,11 @@ func getThingType(tt string) ThingType {
 	case string(TypeRPGIssue):
 		return TypeRPGIssue
 	default:
-		return ThingTypeNotRecogniced
+		return ThingTypeNotRecognised
 	}
 }
 
 type GameCollection map[string]Game
-
-// func CreateGCfromSR(sr BggSearchResult) GameCollection {
-// 	gc := GameCollection{}
-
-// 	for _, v := range sr.Item {
-// 		if e, ok := gc[v.ID]; ok {
-// 			e.BggType = append(e.BggType, getThingType(v.Type))
-// 			gc[v.ID] = e
-// 		} else {
-// 			tq := NewThingQuery(v.ID)
-// 			game, err := Query(tq)
-// 			if err != nil {
-// 				log.Println(err)
-// 			}
-// 			if el, io := game[v.ID]; io {
-// 				gc[v.ID] = el
-// 			}
-// 		}
-// 	}
-
-// 	return gc
-// }
-
-// func CreateGCfromTI(ti ThingItems) GameCollection {
-// 	gc := GameCollection{}
-
-// 	for _, v := range ti.Games {
-// 		if e, ok := gc[v.ID]; ok {
-// 			e.BggType = append(e.BggType, getThingType(v.Type))
-// 		} else {
-// 			tt := []ThingType{}
-// 			lx := []Links{}
-// 			for _, l := range v.Link {
-// 				newLx := Links{
-// 					Type:    getLinkType(l.Type),
-// 					Value:   l.Value,
-// 					ID:      l.ID,
-// 					Inbound: l.Inbound,
-// 				}
-// 				lx = append(lx, newLx)
-// 			}
-// 			gc[v.ID] = Game{
-// 				Title:         v.Name[0].Value,
-// 				BggId:         v.ID,
-// 				BggType:       append(tt, getThingType(v.Type)),
-// 				Yearpublished: v.Yearpublished.Value,
-// 				Description:   v.Description,
-// 				Thumbnail:     v.Thumbnail,
-// 				Image:         v.Image,
-// 				Minage:        v.Minage.Value,
-// 				Minplayer:     v.Minplayers.Value,
-// 				Maxplayer:     v.Maxplayers.Value,
-// 				Minplaytime:   v.Minplaytime.Value,
-// 				Maxplaytime:   v.Minplaytime.Value,
-// 				Links:         lx,
-// 			}
-// 		}
-// 	}
-
-// 	return gc
-// }
 
 func (gc *GameCollection) Array() (games []Game) {
 	for _, v := range *gc {
