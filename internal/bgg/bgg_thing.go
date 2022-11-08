@@ -233,22 +233,27 @@ func (btr *BggThingResult) UnmarshalBody(b *http.Response) error {
 	return nil
 }
 
-func (btr *BggThingResult) ToGameCollection() models.GameCollection {
-	gc := models.GameCollection{}
+func (btr *BggThingResult) ToGames() []models.Game {
+	games := []models.Game{}
+	//Index for faster lookup instead of a nested for-loop
+	index := map[string]int{}
 
-	for _, v := range btr.Games {
-		if e, ok := gc[v.ID]; ok {
-			e.SetBggType(v.Type)
+	for i, v := range btr.Games {
+		// check, if there is an entry with the same ID with different type
+		// and add type to existing entry using the index map for the lookup
+		if e, ok := index[v.ID]; ok {
+			games[e].AddBggType(v.Type)
 		} else {
+			index[v.ID] = i
 			lx := []models.Link{}
 			for _, l := range v.Link {
 
 				newLx := models.Link{
 					Value:   l.Value,
-					ID:      l.ID,
+					BggID:   l.ID,
 					Inbound: l.Inbound,
 				}
-				newLx.SetLinkType(v.Type)
+				newLx.SetLinkType(l.Type)
 				lx = append(lx, newLx)
 			}
 			game := models.Game{
@@ -259,7 +264,7 @@ func (btr *BggThingResult) ToGameCollection() models.GameCollection {
 				Image:       v.Image,
 				Links:       lx,
 			}
-			game.SetBggType(v.Type)
+			game.AddBggType(v.Type)
 			game.SetYearpublished(v.Yearpublished.Value)
 			game.SetMinage(v.Minage.Value)
 			game.SetMinplaytime(v.Minplaytime.Value)
@@ -267,8 +272,9 @@ func (btr *BggThingResult) ToGameCollection() models.GameCollection {
 			game.SetMinplayer(v.Minplayers.Value)
 			game.SetMaxplayer(v.Maxplayers.Value)
 
+			games = append(games, game)
 		}
 	}
 
-	return gc
+	return games
 }
