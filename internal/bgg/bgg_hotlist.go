@@ -28,9 +28,9 @@ type HotQuery struct {
 }
 
 // NewHotQuery returns a pointer to a new HotQuery
-func NewHotQuery(hotness HotlistType) *HotQuery {
+func NewHotQuery(hotness string) *HotQuery {
 	hq := HotQuery{
-		hotlistType: hotness,
+		hotlistType: HotlistType(hotness),
 	}
 	return &hq
 }
