@@ -18,7 +18,7 @@ func bggsearch(c *gin.Context) {
 
 	q := bgg.NewSearchQuery(searchTerm)
 
-	q.SetThingType(string(models.TypeBoardGame), string(models.TypeBoardGameExpansion))
+	q.AddThingType(string(models.TypeBoardGame), string(models.TypeBoardGameExpansion))
 
 	res, err := bgg.Query(q)
 	if err != nil {

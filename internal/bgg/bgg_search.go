@@ -96,8 +96,8 @@ func NewSearchQuery(query string) *SearchQuery {
 }
 
 // SetThingType returns all items that match query of type ThingType
-func (sq *SearchQuery) AddThingType(thingType string) {
-	sq.ThingTypes = append(sq.ThingTypes, thingType)
+func (sq *SearchQuery) AddThingType(thingType ...string) {
+	sq.ThingTypes = append(sq.ThingTypes, thingType...)
 }
 
 // EnableExact limits results to items that match the query exactly
