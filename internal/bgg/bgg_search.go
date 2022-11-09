@@ -26,26 +26,18 @@ type BggSearchResult struct {
 	} `xml:"item" json:"item"`
 }
 
-func (bsr *BggSearchResult) ToGameCollection() models.GameCollection {
-	gc := models.GameCollection{}
-
+func (bsr *BggSearchResult) ToGames() []models.Game {
+	ids := []string{}
 	for _, v := range bsr.Item {
-		if e, ok := gc[v.ID]; ok {
-			e.SetBggType(v.Type)
-			gc[v.ID] = e
-		} else {
-			tq := NewThingQuery(v.ID)
-			game, err := Query(tq)
-			if err != nil {
-				log.Println(err)
-			}
-			if el, io := game[v.ID]; io {
-				gc[v.ID] = el
-			}
-		}
+		ids = append(ids, v.ID)
+	}
+	tq := NewThingQuery(ids...)
+	games, err := Query(tq)
+	if err != nil {
+		log.Println(err)
 	}
 
-	return gc
+	return games
 }
 
 // UnmarshalBody wraps xml.Unmarshal

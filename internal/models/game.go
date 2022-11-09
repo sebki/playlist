@@ -9,7 +9,7 @@ type Game struct {
 	Title         string      `json:"title"`
 	Description   string      `json:"description"`
 	BggId         string      `json:"bggId"`
-	BggType       []ThingType `json:"type"`
+	BggType       []ThingType `json:"bggtype"`
 	Thumbnail     string      `json:"thumbnail"`
 	Image         string      `json:"image"`
 	Yearpublished int         `json:"yearpublished"`
@@ -40,7 +40,7 @@ func (g *Game) SetBggId(id string) {
 	g.BggId = id
 }
 
-func (g *Game) SetBggType(tt string) {
+func (g *Game) AddBggType(tt string) {
 	g.BggType = append(g.BggType, getThingType(tt))
 }
 
@@ -134,14 +134,4 @@ func getThingType(tt string) ThingType {
 	default:
 		return ThingTypeNotRecognised
 	}
-}
-
-type GameCollection map[string]Game
-
-func (gc *GameCollection) Array() (games []Game) {
-	for _, v := range *gc {
-		games = append(games, v)
-	}
-
-	return games
 }

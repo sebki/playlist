@@ -20,7 +20,7 @@ const baseURL = "https://www.boardgamegeek.com/xmlapi2/"
 
 // Query queries the Boardgamegeek XML API 2 and returns a http.Response.
 // Retries 10 times, if response status is not ok
-func Query(q BggQuery) (models.GameCollection, error) {
+func Query(q BggQuery) ([]models.Game, error) {
 	log.Println("Query func called")
 	search := q.generateSearchString()
 	log.Println("Searchstring generated: ", search)
@@ -39,18 +39,18 @@ func Query(q BggQuery) (models.GameCollection, error) {
 		sr := &BggSearchResult{}
 		err := sr.UnmarshalBody(res)
 		if err != nil {
-			return models.GameCollection{}, err
+			return []models.Game{}, err
 		}
-		return sr.ToGameCollection(), nil
+		return sr.ToGames(), nil
 	case *ThingQuery:
 		log.Println("ThingQuery type identified")
 		btr := &BggThingResult{}
 		err := btr.UnmarshalBody(res)
 		if err != nil {
-			return models.GameCollection{}, err
+			return []models.Game{}, err
 		}
-		return btr.ToGameCollection(), nil
+		return btr.ToGames(), nil
 	default:
-		return models.GameCollection{}, nil
+		return []models.Game{}, nil
 	}
 }

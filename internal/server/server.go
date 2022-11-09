@@ -7,6 +7,7 @@ func Start(port string) {
 	r.Use(CORSMiddleware())
 
 	r.GET("/bggsearch", bggsearch)
+	r.GET("/bgghotness", bgghotness)
 
 	r.Run(port)
 }
