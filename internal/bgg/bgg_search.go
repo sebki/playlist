@@ -10,6 +10,49 @@ import (
 	"github.com/sebki/playlist/internal/models"
 )
 
+type SearchQuery struct {
+	Term       string
+	ThingTypes []string
+	Exact      bool
+}
+
+func (sq *SearchQuery) generateSearchString() string {
+	searchString := baseURL + "search?query=" + strings.ReplaceAll(sq.Term, " ", "+")
+	if len(sq.ThingTypes) > 0 {
+		searchString += "&type="
+		for i, v := range sq.ThingTypes {
+			searchString += v
+			if i < len(sq.ThingTypes)-1 {
+				searchString += ","
+			}
+		}
+
+	}
+	if sq.Exact {
+		searchString += "&exact=1"
+	}
+	return searchString
+}
+
+// NewSearchQuery returns a pointer to a new SearchQuery
+func NewSearchQuery(query string) *SearchQuery {
+	newQuery := strings.ReplaceAll(query, " ", "+")
+	sq := SearchQuery{
+		Term: newQuery,
+	}
+	return &sq
+}
+
+// SetThingType returns all items that match query of type ThingType
+func (sq *SearchQuery) AddThingType(thingType ...string) {
+	sq.ThingTypes = append(sq.ThingTypes, thingType...)
+}
+
+// EnableExact limits results to items that match the query exactly
+func (sq *SearchQuery) EnableExact() {
+	sq.Exact = true
+}
+
 type BggSearchResult struct {
 	Total string `xml:"total,attr" json:"total"`
 	Item  []struct {
@@ -52,47 +95,4 @@ func (sr *BggSearchResult) UnmarshalBody(b *http.Response) error {
 		return err
 	}
 	return nil
-}
-
-type SearchQuery struct {
-	Term       string
-	ThingTypes []string
-	Exact      bool
-}
-
-func (sq *SearchQuery) generateSearchString() string {
-	searchString := baseURL + "search?query=" + strings.ReplaceAll(sq.Term, " ", "+")
-	if len(sq.ThingTypes) > 0 {
-		searchString += "&type="
-		for i, v := range sq.ThingTypes {
-			searchString += v
-			if i < len(sq.ThingTypes)-1 {
-				searchString += ","
-			}
-		}
-
-	}
-	if sq.Exact {
-		searchString += "&exact=1"
-	}
-	return searchString
-}
-
-// NewSearchQuery returns a pointer to a new SearchQuery
-func NewSearchQuery(query string) *SearchQuery {
-	newQuery := strings.ReplaceAll(query, " ", "+")
-	sq := SearchQuery{
-		Term: newQuery,
-	}
-	return &sq
-}
-
-// SetThingType returns all items that match query of type ThingType
-func (sq *SearchQuery) AddThingType(thingType ...string) {
-	sq.ThingTypes = append(sq.ThingTypes, thingType...)
-}
-
-// EnableExact limits results to items that match the query exactly
-func (sq *SearchQuery) EnableExact() {
-	sq.Exact = true
 }

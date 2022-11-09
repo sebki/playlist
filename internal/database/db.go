@@ -11,22 +11,30 @@ import (
 
 const dbAddr = "https://graph.kiedaisch.net"
 
+type db struct {
+	Client *dgo.Dgraph
+	Closer CloseFunc
+}
+
+var Database db
+
 // CloseFunc is used to pass the grpc.ClientConn Close() function out of newClient()
 type CloseFunc func()
 
-func NewClient() (*dgo.Dgraph, CloseFunc) {
+func NewClient() db {
 	d, err := grpc.Dial(dbAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return dgo.NewDgraphClient(
-			api.NewDgraphClient(d),
-		), func() {
+	return db{
+		Client: dgo.NewDgraphClient(api.NewDgraphClient(d)),
+		Closer: func() {
 			if err := d.Close(); err != nil {
 				log.Printf("Error while closing connection:%v", err)
 			}
-		}
+		},
+	}
 }
 
 // func setup(c *dgo.Dgraph) {

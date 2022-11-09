@@ -35,7 +35,6 @@ func Query(q BggQuery) ([]models.Game, error) {
 
 	switch q.(type) {
 	case *SearchQuery:
-		log.Println("SearchQuery type identified")
 		sr := &BggSearchResult{}
 		err := sr.UnmarshalBody(res)
 		if err != nil {
@@ -43,13 +42,19 @@ func Query(q BggQuery) ([]models.Game, error) {
 		}
 		return sr.ToGames(), nil
 	case *ThingQuery:
-		log.Println("ThingQuery type identified")
 		btr := &BggThingResult{}
 		err := btr.UnmarshalBody(res)
 		if err != nil {
 			return []models.Game{}, err
 		}
 		return btr.ToGames(), nil
+	case *HotQuery:
+		hqr := &BggHotResult{}
+		err := hqr.UnmarshalBody(res)
+		if err != nil {
+			return []models.Game{}, err
+		}
+		return hqr.ToGames(), nil
 	default:
 		return []models.Game{}, nil
 	}

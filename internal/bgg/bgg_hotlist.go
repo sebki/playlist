@@ -60,7 +60,7 @@ type BggHotResult struct {
 }
 
 // Write unmarshals the response body to HotItems
-func (bhr *BggHotResult) Unmarshal(b *http.Response) error {
+func (bhr *BggHotResult) UnmarshalBody(b *http.Response) error {
 	defer b.Body.Close()
 	body, err := io.ReadAll(b.Body)
 	if err != nil {
