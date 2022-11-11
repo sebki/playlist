@@ -1,11 +1,11 @@
 package models
 
 type Link struct {
-	UID     string   `json:"uid"`
-	Type    LinkType `json:"type"`
-	BggID   string   `json:"bggid"`
-	Value   string   `json:"value"`
-	Inbound bool     `json:"inbound,omitempty"`
+	UID      string   `json:"uid"`
+	LinkType LinkType `json:"linktype"`
+	BggID    string   `json:"bggid"`
+	Value    string   `json:"value"`
+	Inbound  bool     `json:"inbound,omitempty"`
 }
 
 func NewLink() Link {
@@ -13,7 +13,7 @@ func NewLink() Link {
 }
 
 func (l *Link) SetLinkType(lt string) {
-	l.Type = getLinkType(lt)
+	l.LinkType = getLinkType(lt)
 }
 
 func (l *Link) SetId(id string) {
