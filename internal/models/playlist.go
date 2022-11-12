@@ -7,10 +7,10 @@ import (
 )
 
 type ListedGame struct {
-	UID         string
-	Rank        int
-	Description string
-	Game        Game
+	UID             string `json:"uid"`
+	Rank            int    `json:"rank"`
+	UserDescription string `json:"userdescription"`
+	Game            Game
 }
 
 func (lg *ListedGame) SetRank(rank string) {
@@ -42,6 +42,8 @@ func getListType(lt string) ListType {
 
 type Playlist struct {
 	UID              string
+	Title            string
+	Description      string
 	DateCreated      time.Time
 	DateLastModified time.Time
 	ListType         ListType

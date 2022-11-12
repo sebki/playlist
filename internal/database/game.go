@@ -30,21 +30,17 @@ func (db *db) searchGameByBggId(bggId string) (models.Game, error) {
 
 	resp, err := txn.Query(ctx, q)
 	if err != nil {
-		return err
+		return models.Game{}, err
 	}
 
 	var data struct {
-		Username []struct {
-			Name string `json:"username"`
-		} `json:"user"`
-		Email []struct {
-			Email string `json:"email"`
-		} `json:"email"`
+		models.Game
 	}
 
 	err = json.Unmarshal(resp.GetJson(), &data)
 	if err != nil {
-		return err
+		return models.Game{}, err
 	}
 
+	return data.Game, nil
 }

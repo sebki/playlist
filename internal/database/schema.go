@@ -1,19 +1,29 @@
 package database
 
 var schema string = `
-	title: string @index(exact) .
-	description: string .
+	title: string @lang @index(fulltext) .
+	description: string @lang .
 	bggId: string @index(exact) .
 	bggType: [string] .
 	thumbnail: string .
 	image: string .
-	links: [Link] .
+	links: [uid] .
 	minage: int .
 	minplayer: int .
 	maxplayer: int .
 	minplaytime: int .
 	maxplaytime: int .
-	linktype: uid .
+	linktype: string .
+	inbound: bool .
+	rank: int .
+	game: uid .
+	userdescription: string @lang .
+	datecreated: dateTime .
+	datemodified: dateTime .
+	listtype: string .
+	length: int .
+	games: [uid] .
+
 	type Game {
 		title
 		description
@@ -31,15 +41,21 @@ var schema string = `
 	type Link {
 		linktype
 		bggId
-		value
+		linkvalue
 		inbound
 	}
-`
-
-var linkSchema string = `
-	
-	bggId: string @index(exact) .
-	value: string @index(exact) .
-	inbound: bool .
-	
+	type ListedGame {
+		rank
+		userdescription
+		game
+	}
+	type Playlist {
+		title
+		description
+		datecreated
+		datemodified
+		listtype
+		length
+		games
+	}
 `

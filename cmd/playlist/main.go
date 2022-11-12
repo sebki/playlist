@@ -10,6 +10,8 @@ func main() {
 	defer db.Closer()
 
 	database.Database = db
+
+	db.Setup()
 	// c, close := newClient()
 	// defer close()
 

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"log"
 
 	"github.com/dgraph-io/dgo/v200"
@@ -9,7 +10,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const dbAddr = "https://graph.kiedaisch.net"
+const dbAddr = "localhost:9080"
 
 type db struct {
 	Client *dgo.Dgraph
@@ -37,15 +38,11 @@ func NewClient() db {
 	}
 }
 
-// func setup(c *dgo.Dgraph) {
-// 	err := c.Alter(context.Background(), &api.Operation{
-// 		Schema: `
-// 			username: string @index(term) @lang @upsert .
-// 			email: string @index(exact) @upsert .
-// 			password: password .
-// 		`,
-// 	})
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+func (db *db) Setup() {
+	err := db.Client.Alter(context.Background(), &api.Operation{
+		Schema: schema,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+}

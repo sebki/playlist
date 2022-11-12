@@ -249,9 +249,9 @@ func (btr *BggThingResult) ToGames() []models.Game {
 			for _, l := range v.Link {
 
 				newLx := models.Link{
-					Value:   l.Value,
-					BggID:   l.ID,
-					Inbound: l.Inbound,
+					LinkValue: l.Value,
+					BggID:     l.ID,
+					Inbound:   l.Inbound,
 				}
 				newLx.SetLinkType(l.Type)
 				lx = append(lx, newLx)
