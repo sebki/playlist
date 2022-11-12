@@ -20,10 +20,13 @@ type Game struct {
 	Maxplayer     int         `json:"maxplayer,omitempty"`
 	Minplaytime   int         `json:"minplaytime,omitempty"`
 	Maxplaytime   int         `json:"maxplaytime,omitempty"`
+	DgraphType    string      `json:"dgraph.type"`
 }
 
 func NewGame() Game {
-	return Game{}
+	return Game{
+		DgraphType: "Game",
+	}
 }
 
 func (g *Game) SetTitle(title string) {

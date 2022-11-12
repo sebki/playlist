@@ -1,15 +1,18 @@
 package models
 
 type Link struct {
-	UID       string   `json:"uid,omitempty"`
-	LinkType  LinkType `json:"linktype,omitempty"`
-	BggID     string   `json:"bggid,omitempty"`
-	LinkValue string   `json:"linkvalue,omitempty"`
-	Inbound   bool     `json:"inbound,omitempty"`
+	UID        string   `json:"uid,omitempty"`
+	LinkType   LinkType `json:"linktype,omitempty"`
+	BggID      string   `json:"bggid,omitempty"`
+	LinkValue  string   `json:"linkvalue,omitempty"`
+	Inbound    bool     `json:"inbound,omitempty"`
+	DgraphType string   `json:"dgraph.type"`
 }
 
 func NewLink() Link {
-	return Link{}
+	return Link{
+		DgraphType: "Link",
+	}
 }
 
 func (l *Link) SetLinkType(lt string) {

@@ -249,9 +249,10 @@ func (btr *BggThingResult) ToGames() []models.Game {
 			for _, l := range v.Link {
 
 				newLx := models.Link{
-					LinkValue: l.Value,
-					BggID:     l.ID,
-					Inbound:   l.Inbound,
+					LinkValue:  l.Value,
+					BggID:      l.ID,
+					Inbound:    l.Inbound,
+					DgraphType: "Link",
 				}
 				newLx.SetLinkType(l.Type)
 				lx = append(lx, newLx)
@@ -263,6 +264,7 @@ func (btr *BggThingResult) ToGames() []models.Game {
 				Thumbnail:   v.Thumbnail,
 				Image:       v.Image,
 				Links:       lx,
+				DgraphType:  "Game",
 			}
 			game.AddBggType(v.Type)
 			game.SetYearpublished(v.Yearpublished.Value)
