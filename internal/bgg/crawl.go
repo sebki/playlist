@@ -12,7 +12,9 @@ func AddHotness() {
 	if err != nil {
 		log.Println(err)
 	}
+
 	err = database.Database.CreateGames(res...)
+
 	if err != nil {
 		log.Println(err)
 	}

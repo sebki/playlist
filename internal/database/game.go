@@ -17,7 +17,7 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 
 	q := fmt.Sprintf(`
 	{
-		games(func: eq(bggId, %q)) {
+		items(func: eq(bggId, %q)) {
 			uid
 		}
 		
@@ -29,7 +29,9 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 	}
 
 	var data struct {
-		Games []models.Game `json:"games"`
+		Items []struct {
+			Uid string `json:"uid"`
+		} `json:"items"`
 	}
 
 	err = json.Unmarshal(resp.GetJson(), &data)
@@ -37,25 +39,25 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 		return "", err
 	}
 
-	if len(data.Games) > 0 {
-		return data.Games[0].Uid, nil
+	if len(data.Items) > 0 {
+		return data.Items[0].Uid, nil
 	}
 
 	return "", nil
 }
 
-func (db *db) CreateGames(game ...models.Game) error {
-	for _, v := range game {
-		if uid, err := db.getUidByBggId(v.BggId); uid == "" {
+func (db *db) CreateGames(games ...models.Game) error {
+	for _, game := range games {
+		if uid, err := db.getUidByBggId(game.BggID()); uid == "" {
 			if err != nil {
 				return err
 			}
-			log.Println("Create new game in dgraph for game: ", v)
+			log.Println("Create new game in dgraph for game: ", game)
 			ctx := context.Background()
 			txn := db.Client.NewTxn()
 			defer txn.Discard(ctx)
 
-			g, err := json.Marshal(&v)
+			g, err := json.Marshal(&game)
 			if err != nil {
 				return err
 			}
@@ -71,9 +73,9 @@ func (db *db) CreateGames(game ...models.Game) error {
 			}
 
 		} else {
-			log.Println("Game found: ", uid)
+			log.Println("Item found: ", uid)
 		}
-
 	}
+
 	return nil
 }

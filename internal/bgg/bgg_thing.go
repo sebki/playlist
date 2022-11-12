@@ -250,7 +250,7 @@ func (btr *BggThingResult) ToGames() []models.Game {
 
 				newLx := models.Link{
 					LinkValue:  l.Value,
-					BggID:      l.ID,
+					BggId:      l.ID,
 					Inbound:    l.Inbound,
 					DgraphType: "Link",
 				}

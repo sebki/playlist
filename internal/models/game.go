@@ -108,6 +108,10 @@ func (g *Game) SetMaxplaytime(time string) {
 	g.Maxplaytime = intTime
 }
 
+func (g Game) BggID() string {
+	return g.BggId
+}
+
 type ThingType string
 
 const (

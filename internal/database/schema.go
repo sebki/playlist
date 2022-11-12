@@ -13,7 +13,7 @@ var schema string = `
 	maxplayer: int .
 	minplaytime: int .
 	maxplaytime: int .
-	linktype: string .
+	linktype: string @index(exact) .
 	linkvalue: string .
 	inbound: bool .
 	rank: int .

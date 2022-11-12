@@ -3,7 +3,7 @@ package models
 type Link struct {
 	UID        string   `json:"uid,omitempty"`
 	LinkType   LinkType `json:"linktype,omitempty"`
-	BggID      string   `json:"bggid,omitempty"`
+	BggId      string   `json:"bggid,omitempty"`
 	LinkValue  string   `json:"linkvalue,omitempty"`
 	Inbound    bool     `json:"inbound,omitempty"`
 	DgraphType string   `json:"dgraph.type"`
@@ -20,11 +20,15 @@ func (l *Link) SetLinkType(lt string) {
 }
 
 func (l *Link) SetId(id string) {
-	l.BggID = id
+	l.BggId = id
 }
 
 func (l *Link) SetValue(val string) {
 	l.LinkValue = val
+}
+
+func (l Link) BggID() string {
+	return l.BggId
 }
 
 func (l *Link) SetInbound(inb bool) {
@@ -42,6 +46,7 @@ const (
 	BoardgameArtistType         LinkType = "boardgameartist"
 	BoardgamePublisherType      LinkType = "boardgamepublisher"
 	BoardgameImplementationType LinkType = "boardgameimplementation"
+	BoardgameCompilationType    LinkType = "boardgamecompilation"
 	LinkTypeNotRecognised       LinkType = "linktypenotrecognised"
 )
 
@@ -63,6 +68,8 @@ func getLinkType(lt string) LinkType {
 		return BoardgamePublisherType
 	case string(BoardgameImplementationType):
 		return BoardgameImplementationType
+	case string(BoardgameCompilationType):
+		return BoardgameCompilationType
 	default:
 		return LinkTypeNotRecognised
 	}
