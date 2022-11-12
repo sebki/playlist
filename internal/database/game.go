@@ -29,7 +29,9 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 	}
 
 	var data struct {
-		Uid string `json:"uid"`
+		Game struct {
+			Uid string `json:"uid"`
+		} `json:"game"`
 	}
 
 	err = json.Unmarshal(resp.GetJson(), &data)
@@ -37,7 +39,7 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 		return "", err
 	}
 
-	return data.Uid, nil
+	return data.Game.Uid, nil
 }
 
 func (db *db) CreateGames(game ...models.Game) error {
