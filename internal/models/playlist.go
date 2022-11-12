@@ -41,14 +41,14 @@ func getListType(lt string) ListType {
 }
 
 type Playlist struct {
-	UID              string
-	Title            string
-	Description      string
-	DateCreated      time.Time
-	DateLastModified time.Time
-	ListType         ListType
-	Length           int
-	Games            []ListedGame
+	UID              string       `json:"uid"`
+	Title            string       `json:"title"`
+	Description      string       `json:"description"`
+	DateCreated      time.Time    `json:"datecreated"`
+	DateLastModified time.Time    `json:"datemodified"`
+	ListType         ListType     `json:"listtype"`
+	Length           int          `json:"length"`
+	Games            []ListedGame `json:"games"`
 }
 
 func (pl *Playlist) SetListType(lt string) {
