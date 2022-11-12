@@ -14,6 +14,7 @@ var schema string = `
 	minplaytime: int .
 	maxplaytime: int .
 	linktype: string .
+	linkvalue: string .
 	inbound: bool .
 	rank: int .
 	game: uid .
