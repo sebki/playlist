@@ -17,7 +17,7 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 
 	q := fmt.Sprintf(`
 	{
-		game(func: eq(bggId, %q)) {
+		games(func: eq(bggId, %q)) {
 			uid
 		}
 		
@@ -29,9 +29,7 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 	}
 
 	var data struct {
-		Game struct {
-			Uid string `json:"uid"`
-		} `json:"game"`
+		Games []models.Game `json:"games"`
 	}
 
 	err = json.Unmarshal(resp.GetJson(), &data)
@@ -39,7 +37,11 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 		return "", err
 	}
 
-	return data.Game.Uid, nil
+	if len(data.Games) > 0 {
+		return data.Games[0].Uid, nil
+	}
+
+	return "", nil
 }
 
 func (db *db) CreateGames(game ...models.Game) error {
