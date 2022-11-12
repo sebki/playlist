@@ -58,17 +58,17 @@ func (db *db) CreateGames(game ...models.Game) error {
 			}
 
 			mu := &api.Mutation{
-				SetJson:   g,
-				CommitNow: true,
+				SetJson: g,
 			}
 
-			assigned, err := txn.Mutate(ctx, mu)
+			_, err = txn.Mutate(ctx, mu)
 			if err != nil {
 				return err
 			}
-			txn.Commit(ctx)
-
-			log.Println(assigned)
+			err = txn.Commit(ctx)
+			if err != nil {
+				log.Println(err)
+			}
 		} else {
 			log.Println("Game found: ", uid)
 		}
