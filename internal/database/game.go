@@ -19,6 +19,7 @@ func (db *db) searchGameByBggId(bggId string) (uid string, err error) {
 	{
 		game(func: eq(bggId, %q)) {
 			uid
+		}
 		
 	}`, bggId)
 
