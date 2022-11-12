@@ -10,7 +10,7 @@ import (
 	"github.com/sebki/playlist/internal/models"
 )
 
-func (db *db) searchGameByBggId(bggId string) (uid string, err error) {
+func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 	ctx := context.Background()
 	txn := db.Client.NewTxn()
 	defer txn.Discard(ctx)
@@ -29,7 +29,7 @@ func (db *db) searchGameByBggId(bggId string) (uid string, err error) {
 	}
 
 	var data struct {
-		models.Game
+		Uid string `json:"uid"`
 	}
 
 	err = json.Unmarshal(resp.GetJson(), &data)
@@ -42,7 +42,7 @@ func (db *db) searchGameByBggId(bggId string) (uid string, err error) {
 
 func (db *db) CreateGames(game ...models.Game) error {
 	for _, v := range game {
-		if uid, err := db.searchGameByBggId(v.BggId); uid == "" {
+		if uid, err := db.getUidByBggId(v.BggId); uid == "" {
 			if err != nil {
 				return err
 			}
