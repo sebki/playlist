@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/dgraph-io/dgo/v200/protos/api"
 	"github.com/sebki/playlist/internal/models"
@@ -49,6 +50,7 @@ func (db *db) CreateGames(game ...models.Game) error {
 			if err != nil {
 				return err
 			}
+			log.Println("Create new game in dgraph")
 			ctx := context.Background()
 			txn := db.Client.NewTxn()
 			defer txn.Discard(ctx)
@@ -63,10 +65,12 @@ func (db *db) CreateGames(game ...models.Game) error {
 				CommitNow: true,
 			}
 
-			_, err = txn.Mutate(ctx, mu)
+			assigned, err := txn.Mutate(ctx, mu)
 			if err != nil {
 				return err
 			}
+
+			log.Println(assigned)
 		}
 
 	}
