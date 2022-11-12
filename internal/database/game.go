@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dgraph-io/dgo/v200/protos/api"
 	"github.com/sebki/playlist/internal/models"
 )
 
-func (db *db) searchGameByBggId(bggId string) (models.Game, error) {
+func (db *db) searchGameByBggId(bggId string) (uid string, err error) {
 	ctx := context.Background()
 	txn := db.Client.NewTxn()
 	defer txn.Discard(ctx)
@@ -17,20 +18,12 @@ func (db *db) searchGameByBggId(bggId string) (models.Game, error) {
 	{
 		game(func: eq(bggId, %q)) {
 			uid
-			bggId
-			description
-			bggId
-			bggType {
-				
-			}
-
-		}
 		
 	}`, bggId)
 
 	resp, err := txn.Query(ctx, q)
 	if err != nil {
-		return models.Game{}, err
+		return "", err
 	}
 
 	var data struct {
@@ -39,8 +32,43 @@ func (db *db) searchGameByBggId(bggId string) (models.Game, error) {
 
 	err = json.Unmarshal(resp.GetJson(), &data)
 	if err != nil {
-		return models.Game{}, err
+		return "", err
 	}
 
-	return data.Game, nil
+	return data.Uid, nil
+}
+
+func (db *db) CreateGames(game ...models.Game) error {
+	for _, v := range game {
+		if uid, err := db.searchGameByBggId(v.BggId); uid != "" {
+			if err != nil {
+				return err
+			}
+			continue
+		} else {
+			if err != nil {
+				return err
+			}
+			ctx := context.Background()
+			txn := db.Client.NewTxn()
+			defer txn.Discard(ctx)
+
+			g, err := json.Marshal(&v)
+			if err != nil {
+				return err
+			}
+
+			mu := &api.Mutation{
+				SetJson:   g,
+				CommitNow: true,
+			}
+
+			_, err = txn.Mutate(ctx, mu)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+	return nil
 }
