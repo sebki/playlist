@@ -6,20 +6,20 @@ import (
 )
 
 type Game struct {
-	Uid           string      `json:"uid"`
-	Title         string      `json:"title"`
-	Description   string      `json:"description"`
-	BggId         string      `json:"bggId"`
-	BggType       []ThingType `json:"bggtype"`
-	Thumbnail     string      `json:"thumbnail"`
-	Image         string      `json:"image"`
-	Yearpublished int         `json:"yearpublished"`
-	Links         []Link      `json:"links"`
-	Minage        int         `json:"minage"`
-	Minplayer     int         `json:"minplayer"`
-	Maxplayer     int         `json:"maxplayer"`
-	Minplaytime   int         `json:"minplaytime"`
-	Maxplaytime   int         `json:"maxplaytime"`
+	Uid           string      `json:"uid,omitempty"`
+	Title         string      `json:"title,omitempty"`
+	Description   string      `json:"description,omitempty"`
+	BggId         string      `json:"bggId,omitempty"`
+	BggType       []ThingType `json:"bggtype,omitempty"`
+	Thumbnail     string      `json:"thumbnail,omitempty"`
+	Image         string      `json:"image,omitempty"`
+	Yearpublished int         `json:"yearpublished,omitempty"`
+	Links         []Link      `json:"links,omitempty"`
+	Minage        int         `json:"minage,omitempty"`
+	Minplayer     int         `json:"minplayer,omitempty"`
+	Maxplayer     int         `json:"maxplayer,omitempty"`
+	Minplaytime   int         `json:"minplaytime,omitempty"`
+	Maxplaytime   int         `json:"maxplaytime,omitempty"`
 }
 
 func NewGame() Game {

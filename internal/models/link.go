@@ -1,10 +1,10 @@
 package models
 
 type Link struct {
-	UID       string   `json:"uid"`
-	LinkType  LinkType `json:"linktype"`
-	BggID     string   `json:"bggid"`
-	LinkValue string   `json:"linkvalue"`
+	UID       string   `json:"uid,omitempty"`
+	LinkType  LinkType `json:"linktype,omitempty"`
+	BggID     string   `json:"bggid,omitempty"`
+	LinkValue string   `json:"linkvalue,omitempty"`
 	Inbound   bool     `json:"inbound,omitempty"`
 }
 

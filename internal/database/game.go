@@ -41,13 +41,12 @@ func (db *db) searchGameByBggId(bggId string) (uid string, err error) {
 }
 
 func (db *db) CreateGames(game ...models.Game) error {
-	log.Println("CreateGames called with ", game)
 	for _, v := range game {
 		if uid, err := db.searchGameByBggId(v.BggId); uid == "" {
 			if err != nil {
 				return err
 			}
-			log.Println("Create new game in dgraph")
+			log.Println("Create new game in dgraph for game: ", v)
 			ctx := context.Background()
 			txn := db.Client.NewTxn()
 			defer txn.Discard(ctx)
@@ -58,17 +57,15 @@ func (db *db) CreateGames(game ...models.Game) error {
 			}
 
 			mu := &api.Mutation{
-				SetJson: g,
+				SetJson:   g,
+				CommitNow: true,
 			}
 
 			_, err = txn.Mutate(ctx, mu)
 			if err != nil {
 				return err
 			}
-			err = txn.Commit(ctx)
-			if err != nil {
-				log.Println(err)
-			}
+
 		} else {
 			log.Println("Game found: ", uid)
 		}
