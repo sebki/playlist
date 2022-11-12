@@ -66,6 +66,7 @@ func (db *db) CreateGames(game ...models.Game) error {
 			if err != nil {
 				return err
 			}
+			txn.Commit(ctx)
 
 			log.Println(assigned)
 		} else {
