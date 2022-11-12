@@ -45,11 +45,6 @@ func (db *db) CreateGames(game ...models.Game) error {
 			if err != nil {
 				return err
 			}
-			continue
-		} else {
-			if err != nil {
-				return err
-			}
 			log.Println("Create new game in dgraph")
 			ctx := context.Background()
 			txn := db.Client.NewTxn()
