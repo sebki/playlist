@@ -12,6 +12,8 @@ func main() {
 
 	database.Database = db
 
+	db.Setup()
+
 	bgg.AddHotness()
 
 	server.Start(":3030")
