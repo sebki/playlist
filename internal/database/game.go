@@ -68,6 +68,8 @@ func (db *db) CreateGames(game ...models.Game) error {
 			}
 
 			log.Println(assigned)
+		} else {
+			log.Println("Game found: ", uid)
 		}
 
 	}
