@@ -40,8 +40,9 @@ func (db *db) searchGameByBggId(bggId string) (uid string, err error) {
 }
 
 func (db *db) CreateGames(game ...models.Game) error {
+	log.Println("CreateGames called with ", game)
 	for _, v := range game {
-		if uid, err := db.searchGameByBggId(v.BggId); uid != "" {
+		if uid, err := db.searchGameByBggId(v.BggId); uid == "" {
 			if err != nil {
 				return err
 			}
