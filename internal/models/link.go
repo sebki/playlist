@@ -9,30 +9,8 @@ type Link struct {
 	DgraphType string   `json:"dgraph.type"`
 }
 
-func NewLink() Link {
-	return Link{
-		DgraphType: "Link",
-	}
-}
-
 func (l *Link) SetLinkType(lt string) {
 	l.LinkType = getLinkType(lt)
-}
-
-func (l *Link) SetId(id string) {
-	l.BggId = id
-}
-
-func (l *Link) SetValue(val string) {
-	l.LinkValue = val
-}
-
-func (l Link) BggID() string {
-	return l.BggId
-}
-
-func (l *Link) SetInbound(inb bool) {
-	l.Inbound = inb
 }
 
 type LinkType string

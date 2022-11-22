@@ -9,7 +9,7 @@ type Game struct {
 	Uid           string      `json:"uid,omitempty"`
 	Title         string      `json:"title,omitempty"`
 	Description   string      `json:"description,omitempty"`
-	BggId         string      `json:"bggId,omitempty"`
+	BggId         string      `json:"bggid,omitempty"`
 	BggType       []ThingType `json:"bggtype,omitempty"`
 	Thumbnail     string      `json:"thumbnail,omitempty"`
 	Image         string      `json:"image,omitempty"`
@@ -23,37 +23,8 @@ type Game struct {
 	DgraphType    string      `json:"dgraph.type"`
 }
 
-func NewGame() Game {
-	return Game{
-		DgraphType: "Game",
-	}
-}
-
-func (g *Game) SetTitle(title string) {
-	if title == "" {
-		log.Println("no title provided")
-	}
-	g.Title = title
-}
-
-func (g *Game) SetDescription(desc string) {
-	g.Description = desc
-}
-
-func (g *Game) SetBggId(id string) {
-	g.BggId = id
-}
-
 func (g *Game) AddBggType(tt string) {
 	g.BggType = append(g.BggType, getThingType(tt))
-}
-
-func (g *Game) SetThumbnailLink(link string) {
-	g.Thumbnail = link
-}
-
-func (g *Game) SetImageLink(link string) {
-	g.Image = link
 }
 
 func (g *Game) SetYearpublished(year string) {
@@ -106,10 +77,6 @@ func (g *Game) SetMaxplaytime(time string) {
 		log.Println(err)
 	}
 	g.Maxplaytime = intTime
-}
-
-func (g Game) BggID() string {
-	return g.BggId
 }
 
 type ThingType string

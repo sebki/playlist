@@ -42,7 +42,7 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 
 	q := fmt.Sprintf(`
 	{
-		items(func: eq(bggId, %q)) {
+		items(func: eq(bggid, %q)) {
 			uid
 		}
 		
