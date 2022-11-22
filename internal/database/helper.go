@@ -27,7 +27,7 @@ func (db *db) mutate(item []byte, uid string) (string, error) {
 		newUid = append(newUid, v)
 	}
 	// Mutation on existing Node won't return an uid, return supplied uid
-	if len(uid) == 0 {
+	if len(newUid) == 0 {
 		return uid, nil
 	}
 
