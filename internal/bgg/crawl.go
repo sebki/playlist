@@ -13,7 +13,12 @@ func AddHotness() {
 		log.Println(err)
 	}
 
-	err = database.Database.CreateGames(res...)
+	for _, v := range res {
+		_, err := database.Database.MutateGame(v)
+		if err != nil {
+			log.Println("error mutating game: ", v.Title, err)
+		}
+	}
 
 	if err != nil {
 		log.Println(err)
