@@ -55,6 +55,13 @@ func Query(q BggQuery) ([]models.Game, error) {
 			return []models.Game{}, err
 		}
 		return hqr.ToGames(), nil
+	case *FamilyQuery:
+		bfr := &BggFamilyResult{}
+		err := bfr.UnmarshalBody(res)
+		if err != nil {
+			return []models.Game{}, err
+		}
+		return bfr.ToGames(), nil
 	default:
 		return []models.Game{}, nil
 	}

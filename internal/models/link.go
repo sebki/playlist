@@ -1,12 +1,15 @@
 package models
 
+import "time"
+
 type Link struct {
-	UID        string   `json:"uid,omitempty"`
-	LinkType   LinkType `json:"linktype,omitempty"`
-	BggId      string   `json:"bggid,omitempty"`
-	LinkValue  string   `json:"linkvalue,omitempty"`
-	Inbound    bool     `json:"inbound,omitempty"`
-	DgraphType string   `json:"dgraph.type"`
+	UID          string    `json:"uid,omitempty"`
+	LinkType     LinkType  `json:"linktype,omitempty"`
+	BggId        string    `json:"bggid,omitempty"`
+	LinkValue    string    `json:"linkvalue,omitempty"`
+	Inbound      bool      `json:"inbound,omitempty"`
+	DgraphType   string    `json:"dgraph.type"`
+	LastBggQuery time.Time `json:"lastbggquery"`
 }
 
 func (l *Link) SetLinkType(lt string) {

@@ -16,6 +16,8 @@ func main() {
 
 	bgg.AddHotness()
 
+	go bgg.Crawl()
+
 	server.Start(":3030")
 
 }

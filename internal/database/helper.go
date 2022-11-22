@@ -36,10 +36,6 @@ func (db *db) mutate(item []byte, uid string) (string, error) {
 }
 
 func (db *db) getUidByBggId(bggId string) (uid string, err error) {
-	ctx := context.Background()
-	txn := db.Client.NewTxn()
-	defer txn.Discard(ctx)
-
 	q := fmt.Sprintf(`
 	{
 		items(func: eq(bggid, %q)) {
@@ -48,7 +44,7 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 		
 	}`, bggId)
 
-	resp, err := txn.Query(ctx, q)
+	res, err := db.query(q)
 	if err != nil {
 		return "", err
 	}
@@ -59,7 +55,7 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 		} `json:"items"`
 	}
 
-	err = json.Unmarshal(resp.GetJson(), &data)
+	err = json.Unmarshal(res, &data)
 	if err != nil {
 		return "", err
 	}
@@ -69,4 +65,17 @@ func (db *db) getUidByBggId(bggId string) (uid string, err error) {
 	}
 
 	return "", nil
+}
+
+func (db *db) query(query string) ([]byte, error) {
+	ctx := context.Background()
+	txn := db.Client.NewTxn()
+	defer txn.Discard(ctx)
+
+	resp, err := txn.Query(ctx, query)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	return resp.GetJson(), nil
 }
