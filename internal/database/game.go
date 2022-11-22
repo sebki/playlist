@@ -15,14 +15,14 @@ func (db *db) MutateGame(game models.Game) (models.Game, error) {
 		game.Uid = uid
 	}
 
-	for i, v := range game.Links {
-		l, err := db.MutateLink(v)
-		if err != nil {
-			return game, err
-		}
-		game.Links[i] = l
+	// for i, v := range game.Links {
+	// 	l, err := db.MutateLink(v)
+	// 	if err != nil {
+	// 		return game, err
+	// 	}
+	// 	game.Links[i] = l
 
-	}
+	// }
 
 	g, err := json.Marshal(&game)
 	if err != nil {
