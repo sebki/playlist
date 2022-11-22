@@ -48,16 +48,19 @@ func (db *db) GetFamilyLinks(lastQuery time.Time) ([]models.Link, error) {
 	}
 	`, date)
 
-	links := []models.Link{}
+	var data struct {
+		Links []models.Link `json:"links"`
+	}
+
 	res, err := db.query(query)
 	if err != nil {
-		return links, err
+		return data.Links, err
 	}
 
-	err = json.Unmarshal(res, &links)
+	err = json.Unmarshal(res, &data)
 	if err != nil {
-		return links, err
+		return data.Links, err
 	}
 
-	return links, nil
+	return data.Links, nil
 }
