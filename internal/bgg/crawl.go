@@ -36,17 +36,19 @@ func Crawl() {
 	length := len(links)
 
 	for length > 0 {
-		log.Println("Found ", length, " new links")
+		log.Println("Found", length, "new links")
 		for _, v := range links {
 			fq := NewFamilyQuery(v.BggId)
 			games, err := Query(fq)
-			log.Println("Found ", len(games), " Games in Link: ", v.LinkValue)
+			log.Println("Found", len(games), "Games in Link:", v.LinkValue)
 			if err != nil {
 				log.Println(err)
 			}
 			for _, g := range games {
 				database.Database.MutateGame(g)
 			}
+			v.LastBggQuery = time.Now()
+			database.Database.MutateLink(v)
 		}
 		links, err := database.Database.GetFamilyLinks(date)
 		if err != nil {
