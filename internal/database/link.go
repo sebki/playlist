@@ -48,20 +48,20 @@ func (db *db) GetLink(bggid string) (models.Link, error) {
 	`, bggid)
 
 	var data struct {
-		Links models.Link `json:"links"`
+		Links []models.Link `json:"links"`
 	}
 
 	res, err := db.query(query)
 	if err != nil {
-		return data.Links, err
+		return data.Links[0], err
 	}
 
 	err = json.Unmarshal(res, &data)
 	if err != nil {
-		return data.Links, err
+		return data.Links[0], err
 	}
 
-	return data.Links, nil
+	return data.Links[0], nil
 }
 
 func (db *db) GetFamilyLinks(lastQuery time.Time) ([]models.Link, error) {
