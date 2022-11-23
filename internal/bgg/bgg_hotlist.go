@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/sebki/playlist/internal/database"
 	"github.com/sebki/playlist/internal/models"
 )
 
@@ -76,7 +77,9 @@ func (bhr *BggHotResult) UnmarshalBody(b *http.Response) error {
 func (bhr *BggHotResult) ToGames() []models.Game {
 	ids := []string{}
 	for _, v := range bhr.Item {
-		ids = append(ids, v.ID)
+		if !database.Database.BggIdIsExist(v.ID) {
+			ids = append(ids, v.ID)
+		}
 	}
 	tq := NewThingQuery(ids...)
 	games, err := Query(tq)

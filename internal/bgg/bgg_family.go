@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/sebki/playlist/internal/database"
 	"github.com/sebki/playlist/internal/models"
 )
 
@@ -78,8 +79,11 @@ func (bfr *BggFamilyResult) UnmarshalBody(b *http.Response) error {
 func (bfr *BggFamilyResult) ToGames() []models.Game {
 	ids := []string{}
 	for _, v := range bfr.Item.Link {
-		ids = append(ids, v.ID)
+		if !database.Database.BggIdIsExist(v.ID) {
+			ids = append(ids, v.ID)
+		}
 	}
+
 	tq := NewThingQuery(ids...)
 	games, err := Query(tq)
 	if err != nil {

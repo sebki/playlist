@@ -4,9 +4,11 @@ import (
 	"encoding/xml"
 	"errors"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/sebki/playlist/internal/database"
 	"github.com/sebki/playlist/internal/models"
 )
 
@@ -247,14 +249,26 @@ func (btr *BggThingResult) ToGames() []models.Game {
 			index[v.ID] = i
 			lx := []models.Link{}
 			for _, l := range v.Link {
-
-				newLx := models.Link{
-					LinkValue:  l.Value,
-					BggId:      l.ID,
-					Inbound:    l.Inbound,
-					DgraphType: "Link",
+				newLx, err := database.Database.GetLink(l.ID)
+				if err != nil {
+					log.Println(err)
 				}
-				newLx.SetLinkType(l.Type)
+
+				if newLx.BggId == "" {
+					newLx.BggId = l.ID
+				}
+				if newLx.LinkValue == "" {
+					newLx.LinkValue = l.Value
+				}
+				if newLx.LinkType == "" {
+					newLx.SetLinkType(l.Type)
+				}
+				if !newLx.Inbound {
+					newLx.Inbound = l.Inbound
+				}
+
+				newLx.AddDgraphType("Link")
+
 				lx = append(lx, newLx)
 			}
 			game := models.Game{
@@ -264,8 +278,8 @@ func (btr *BggThingResult) ToGames() []models.Game {
 				Thumbnail:   v.Thumbnail,
 				Image:       v.Image,
 				Links:       lx,
-				DgraphType:  "Game",
 			}
+			game.AddDgraphType("Game")
 			game.AddBggType(v.Type)
 			game.SetYearpublished(v.Yearpublished.Value)
 			game.SetMinage(v.Minage.Value)

@@ -8,6 +8,11 @@ import (
 	"github.com/dgraph-io/dgo/v200/protos/api"
 )
 
+func (db *db) BggIdIsExist(id string) bool {
+	check, _ := db.getUidByBggId(id)
+	return check != ""
+}
+
 func (db *db) mutate(item []byte, uid string) (string, error) {
 	ctx := context.Background()
 	txn := db.Client.NewTxn()

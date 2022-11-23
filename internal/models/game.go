@@ -20,11 +20,17 @@ type Game struct {
 	Maxplayer     int         `json:"maxplayer,omitempty"`
 	Minplaytime   int         `json:"minplaytime,omitempty"`
 	Maxplaytime   int         `json:"maxplaytime,omitempty"`
-	DgraphType    string      `json:"dgraph.type"`
+	DgraphType    []string    `json:"dgraph.type"`
 }
 
 func (g *Game) AddBggType(tt string) {
 	g.BggType = append(g.BggType, getThingType(tt))
+}
+
+func (g *Game) AddDgraphType(t string) {
+	newType := g.DgraphType
+	newType = append(newType, t)
+	g.DgraphType = newType
 }
 
 func (g *Game) SetYearpublished(year string) {

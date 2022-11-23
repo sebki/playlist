@@ -32,6 +32,38 @@ func (db *db) MutateLink(link models.Link) (models.Link, error) {
 	return link, nil
 }
 
+func (db *db) GetLink(bggid string) (models.Link, error) {
+	query := fmt.Sprintf(`
+	{
+		links(func: eq(bggid, %q)){
+			uid
+			linktype
+			bggid
+			linkvalue
+			inbound
+			dgraph.type
+			lastbggquery
+		}
+	}	
+	`, bggid)
+
+	var data struct {
+		Links models.Link `json:"links"`
+	}
+
+	res, err := db.query(query)
+	if err != nil {
+		return data.Links, err
+	}
+
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return data.Links, err
+	}
+
+	return data.Links, nil
+}
+
 func (db *db) GetFamilyLinks(lastQuery time.Time) ([]models.Link, error) {
 	date := lastQuery.Format("2006-01-02")
 	query := fmt.Sprintf(`

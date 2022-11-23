@@ -8,12 +8,18 @@ type Link struct {
 	BggId        string    `json:"bggid,omitempty"`
 	LinkValue    string    `json:"linkvalue,omitempty"`
 	Inbound      bool      `json:"inbound,omitempty"`
-	DgraphType   string    `json:"dgraph.type"`
+	DgraphType   []string  `json:"dgraph.type"`
 	LastBggQuery time.Time `json:"lastbggquery"`
 }
 
 func (l *Link) SetLinkType(lt string) {
 	l.LinkType = getLinkType(lt)
+}
+
+func (l *Link) AddDgraphType(t string) {
+	newType := l.DgraphType
+	newType = append(newType, t)
+	l.DgraphType = newType
 }
 
 type LinkType string

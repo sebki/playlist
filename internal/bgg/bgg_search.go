@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/sebki/playlist/internal/database"
 	"github.com/sebki/playlist/internal/models"
 )
 
@@ -72,7 +73,9 @@ type BggSearchResult struct {
 func (bsr *BggSearchResult) ToGames() []models.Game {
 	ids := []string{}
 	for _, v := range bsr.Item {
-		ids = append(ids, v.ID)
+		if !database.Database.BggIdIsExist(v.ID) {
+			ids = append(ids, v.ID)
+		}
 	}
 	tq := NewThingQuery(ids...)
 	games, err := Query(tq)
