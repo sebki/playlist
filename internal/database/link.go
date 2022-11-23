@@ -53,14 +53,16 @@ func (db *db) GetLink(bggid string) (models.Link, error) {
 
 	res, err := db.query(query)
 	if err != nil {
-		return data.Links[0], err
+		return models.Link{}, err
 	}
 
 	err = json.Unmarshal(res, &data)
 	if err != nil {
-		return data.Links[0], err
+		return models.Link{}, err
 	}
-
+	if len(data.Links) == 0 {
+		return models.Link{}, nil
+	}
 	return data.Links[0], nil
 }
 
