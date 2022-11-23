@@ -83,6 +83,9 @@ func (bfr *BggFamilyResult) ToGames() []models.Game {
 			ids = append(ids, v.ID)
 		}
 	}
+	if len(ids) == 0 {
+		return []models.Game{}
+	}
 
 	tq := NewThingQuery(ids...)
 	games, err := Query(tq)
