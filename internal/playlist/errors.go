@@ -1,10 +1,7 @@
-package errors
+package playlist
 
 import (
 	"errors"
-	"log"
-
-	"github.com/gin-gonic/gin"
 )
 
 // ValidationError holds all errors concerning user validation
@@ -20,21 +17,4 @@ var (
 func IsValidationError(err error) bool {
 	_, ok := err.(ValidationError)
 	return ok
-}
-
-type ErrorData struct {
-	ErrCode int
-	ErrMsg  error
-}
-
-func InternalServerError(c *gin.Context, err error) {
-	errorData := ErrorData{
-		ErrCode: 500,
-		ErrMsg:  err,
-	}
-
-	log.Println(err)
-	errorData.ErrMsg = err
-
-	c.JSON(500, errorData)
 }
