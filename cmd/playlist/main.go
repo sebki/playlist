@@ -1,23 +1,50 @@
 package main
 
 import (
-	"github.com/sebki/playlist/internal/bgg"
-	"github.com/sebki/playlist/internal/database"
-	"github.com/sebki/playlist/internal/server"
+	"flag"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"time"
 )
 
+const version = "0.0.1"
+
+type config struct {
+	port int
+	env  string
+}
+
+type application struct {
+	cfg    config
+	logger *log.Logger
+}
+
 func main() {
-	db := database.NewClient()
-	defer db.Closer()
+	var cfg config
 
-	database.Database = db
+	flag.IntVar(&cfg.port, "port", 4000, "API Server Port")
+	flag.StringVar(&cfg.env, "env", "development", "Environment: (development|staging|production")
+	flag.Parse()
 
-	db.Setup()
+	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	bgg.AddHotness()
+	app := &application{
+		cfg:    cfg,
+		logger: logger,
+	}
 
-	go bgg.Crawl()
+	srv := &http.Server{
+		Addr:         fmt.Sprintf(":%d", cfg.port),
+		Handler:      app.routes(),
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
 
-	server.Start(":3030")
+	logger.Printf("starting %s server on %s", cfg.env, srv.Addr)
+	err := srv.ListenAndServe()
+	logger.Fatal(err)
 
 }
