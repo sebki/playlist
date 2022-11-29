@@ -6,6 +6,31 @@ import (
 )
 
 func (app *application) createGameHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Title         string   `json:"title"`
+		Description   string   `json:"description"`
+		BggID         string   `json:"bgg_id"`
+		BggType       []string `json:"bgg_type"`
+		Thumbnail     string   `json:"thumbnail"`
+		Image         string   `json:"image"`
+		Yearpublished string   `json:"yearpublished"`
+		Links         []struct {
+			LinkType  string `json:"link_type"`
+			BggId     string `json:"bgg_id"`
+			LinkValue string `json:"link_value"`
+			Inbound   bool   `json:"inbound"`
+		} `json:"links"`
+		Minage      string `json:"minage"`
+		Minplayer   string `json:"minplayer"`
+		Maxplayer   string `json:"maxplayer"`
+		Minplaytime string `json:"minplaytime"`
+		Maxplaytime string `json:"maxplaytime"`
+	}
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+	}
+
 	fmt.Fprintln(w, "Game created")
 }
 

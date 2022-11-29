@@ -1,6 +1,10 @@
 package data
 
-import "context"
+import (
+	"context"
+
+	"github.com/sebki/playlist/internal/validator"
+)
 
 type Game struct {
 	Uid           string   `json:"uid,omitempty"`
@@ -44,4 +48,9 @@ type GameUpdate struct {
 	Description string `json:"description,omitempty"`
 	Thumbnail   string `json:"thumbnail,omitempty"`
 	Image       string `json:"image,omitempty"`
+}
+
+func ValidateGame(v *validator.Validator, game *Game) {
+	v.Check(game.Title != "", "title", "must be provided")
+	v.Check(len(game.Title) <= 500, "title", "must not exceed 500 bytes")
 }
