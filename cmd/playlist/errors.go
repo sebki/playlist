@@ -7,7 +7,10 @@ import (
 
 // logs the error
 func (app *application) logError(r *http.Request, err error) {
-	app.logger.Print(err)
+	app.logger.PrintError(err, map[string]string{
+		"request_method": r.Method,
+		"requesr_url":    r.URL.String(),
+	})
 }
 
 // response with a custom error message
@@ -49,4 +52,15 @@ func (app *application) badRequestResponse(w http.ResponseWriter, r *http.Reques
 // response for a 422 unprocessable entity error
 func (app *application) failedValidationResponse(w http.ResponseWriter, r *http.Request, errors map[string]string) {
 	app.errorResponse(w, r, http.StatusUnprocessableEntity, errors)
+}
+
+// response for a 409 conflict error
+func (app *application) editConflictResponse(w http.ResponseWriter, r *http.Request) {
+	message := "unable to update the record due to an edit conflict, please try again"
+	app.errorResponse(w, r, http.StatusConflict, message)
+}
+
+func (app *application) rateLimitExceededResponse(w http.ResponseWriter, r *http.Request) {
+	message := "rate limit exceeded"
+	app.errorResponse(w, r, http.StatusTooManyRequests, message)
 }
