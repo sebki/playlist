@@ -14,5 +14,5 @@ CREATE TABLE IF NOT EXISTS games (
     max_playtime integer NOT NULL,
     min_age integer NOT NULL,
     max_age integer NOT NULL,
-    version integer NOT NULL DEFAULT 1,
+    version integer NOT NULL DEFAULT 1
 )
