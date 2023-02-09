@@ -51,6 +51,16 @@ func (bgt BoardgameType) String() string {
 	}
 }
 
+func ConvertSliceRaw(s []string) *[]BoardgameType {
+	var bt []BoardgameType
+
+	for _, v := range s {
+		bt = append(bt, BoardgameType(v))
+	}
+
+	return &bt
+}
+
 func checkTypes(bgt []BoardgameType) error {
 	for _, v := range bgt {
 		if v.String() == "not valid" {
