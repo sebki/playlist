@@ -3,17 +3,11 @@ package data
 import "time"
 
 type Person struct {
-	Id         int64      `json:"id"`
-	Type       PersonType `json:"type"`
-	Value      string     `json:"value"`
-	CreatedAt  time.Time  `json:"-"`
-	ModifiedAt time.Time  `json:"-"`
-	Version    int32      `json:"version"`
+	Id         int64     `json:"id"`
+	Value      string    `json:"value"`
+	Tags       []Tag     `json:"tags"`
+	User       User      `json:"user"`
+	CreatedAt  time.Time `json:"-"`
+	ModifiedAt time.Time `json:"-"`
+	Version    int32     `json:"version"`
 }
-
-type PersonType string
-
-const (
-	Designer PersonType = "boardgamedesigner"
-	Artist   PersonType = "boardgameartist"
-)

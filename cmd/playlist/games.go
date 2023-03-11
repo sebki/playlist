@@ -33,7 +33,6 @@ func (app *application) createGameHandler(w http.ResponseWriter, r *http.Request
 		Title:         input.Title,
 		Description:   input.Description,
 		YearPublished: input.Yearpublished,
-		Type:          *data.ConvertSliceRaw(input.Type),
 		Thumbnail:     input.Thumbnail,
 		Image:         input.Image,
 		MinPlayer:     input.MinPlayer,
@@ -112,18 +111,17 @@ func (app *application) updateGameHandler(w http.ResponseWriter, r *http.Request
 	// necessary for partial updates. If no value for a field is provided, no new
 	// value will be assigned to the game struct, see if statements below.
 	var input struct {
-		Title         *string  `json:"title"`
-		Description   *string  `json:"description"`
-		YearPublished *int32   `json:"year_published"`
-		Type          []string `json:"bg_type"`
-		Thumbnail     *string  `json:"thumbnail"`
-		Image         *string  `json:"image"`
-		MinPlayer     *int32   `json:"minplayer"`
-		MaxPlayer     *int32   `json:"maxplayer"`
-		MinPlaytime   *int32   `json:"minplaytime"`
-		MaxPlaytime   *int32   `json:"maxplaytime"`
-		MinAge        *int32   `json:"minage"`
-		MaxAge        *int32   `json:"maxage"`
+		Title         *string `json:"title"`
+		Description   *string `json:"description"`
+		YearPublished *int32  `json:"year_published"`
+		Thumbnail     *string `json:"thumbnail"`
+		Image         *string `json:"image"`
+		MinPlayer     *int32  `json:"minplayer"`
+		MaxPlayer     *int32  `json:"maxplayer"`
+		MinPlaytime   *int32  `json:"minplaytime"`
+		MaxPlaytime   *int32  `json:"maxplaytime"`
+		MinAge        *int32  `json:"minage"`
+		MaxAge        *int32  `json:"maxage"`
 	}
 
 	err = app.readJSON(w, r, &input)
@@ -142,10 +140,6 @@ func (app *application) updateGameHandler(w http.ResponseWriter, r *http.Request
 
 	if input.YearPublished != nil {
 		game.YearPublished = *input.YearPublished
-	}
-
-	if input.Type != nil {
-		game.Type = *data.ConvertSliceRaw(input.Type)
 	}
 
 	if input.Thumbnail != nil {
